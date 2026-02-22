@@ -1,5 +1,5 @@
 import z from "zod";
-import { Prisma } from "../../../packages/db/generated/prisma/client";
+import { Prisma } from "@prisma/client"
 
 export const signUpSchema = z.object({
     email: z.email(),
