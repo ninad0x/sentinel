@@ -51,7 +51,7 @@ export default function WorldMap({
     <div className="w-full aspect-2/1 dark:bg-black bg-transparent rounded-lg  relative font-sans">
       <Image
         src={`data:image/svg+xml;utf8,${encodeURIComponent(svgMap)}`}
-        className="h-full w-full [mask-[linear-gradient(to_bottom,transparent,white_10%,white_90%,transparent)] pointer-events-none select-none"
+        className="h-full w-full pointer-events-none select-none mask-y-from-75% mask-y-to-90%"
         alt="world map"
         height="495"
         width="1056"
