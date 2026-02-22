@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import WebsiteCard from "./_components/websiteCard";
+import { CardData } from "@/lib/types";
 
 export default async function Dashboard() {
   
@@ -37,7 +38,7 @@ export default async function Dashboard() {
 
           {/* Sites Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 divide-x divide-gray-200 border-b">
-            {data.map((site) => <WebsiteCard key={site.id} site={site}/>)}
+            {data.map((site: CardData) => <WebsiteCard key={site.id} site={site}/>)}
           </div>
         </div>
       </div>
