@@ -1,13 +1,11 @@
-import { unstable_cache } from "next/cache"
 import { prisma } from "@repo/db/client"
 import { MonitorData } from "./types"
 
 const avg = (arr: number[]) => arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : 100
 
-export const getMonitorData = unstable_cache(
-
-  async (websiteId: string): Promise<MonitorData | null> => {
-
+export const getMonitorData = async (websiteId: string): Promise<MonitorData | null> => {
+  console.log("monitor data called");
+  
     const website = await prisma.website.findUnique({
       where: { id: websiteId },
       select: { id: true, name: true, url: true, currentStatus: true, lastChecked: true }
@@ -70,7 +68,4 @@ export const getMonitorData = unstable_cache(
         d30: avg(metrics.map(m => m.uptimePercent))
       }
     }
-  },
-  ["monitor-data"],
-  { revalidate: 30 }
-)
+  }
