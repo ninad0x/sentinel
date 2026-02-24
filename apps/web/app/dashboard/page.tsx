@@ -9,6 +9,8 @@ export default async function Dashboard() {
   })
 
   if (!session) redirect("/sign-in")
+  
+  console.log("SESSION:", session)
 
   return <DashboardClient />
 }
