@@ -6,6 +6,7 @@ import RegionalLatency from './regionLatencyGraph'
 import LatencyTrend from './latencyTrend'
 import UptimeOverview from './uptimeOverview'
 import IncidentTimeline from './incidentList'
+import { motion } from 'motion/react'
 
 export default function MonitorDashboard({ id }: { id: string }) {
 
@@ -28,14 +29,35 @@ export default function MonitorDashboard({ id }: { id: string }) {
 
   return (
         <div className="bg-gray-50/50">
-            <div className="flex flex-col mx-auto h-full max-w-5xl bg-gray-50 border">
-                <MonitorHeader data={data} />
-                <RegionCards data={data} />
-                <RegionalLatency data={data} />
-                <LatencyTrend data={data} />
-                <UptimeOverview data={data}/>
-                <IncidentTimeline data={data}/>
-            </div>
+            <motion.div
+                key={data}  // trigger when data loads
+                className="flex flex-col mx-auto h-full max-w-5xl bg-gray-50 border"
+                initial="hidden"
+                animate="visible"
+                >
+                {[MonitorHeader, RegionCards, RegionalLatency, LatencyTrend, UptimeOverview, IncidentTimeline]
+                    .map((Component, i) => (
+                    <motion.div
+                        key={i}
+                        variants={{
+                            hidden: { 
+                                opacity: 0,
+                                y: 20,
+                                filter: "blur(8px)"
+                            },
+                            visible: {
+                                opacity: 1,
+                                y: 0,
+                                // transition: { delay: i * 0.10 },
+                                transition: { delay: i * 0.1, type: "spring", stiffness: 200, damping: 15 },
+                                filter: "blur(0px)"
+                            }
+                        }}
+                    >
+                        <Component data={data} />
+                    </motion.div>
+                ))}
+                </motion.div>
         </div>
     )
 }
