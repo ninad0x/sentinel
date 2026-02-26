@@ -2,8 +2,9 @@
 
 import WebsiteCard from './websiteCard'
 import { CardData } from '@/lib/types'
-import { AddWebsite } from './addWebsite'
+import { AddWebsite } from './addWebsiteDialog'
 import { useQuery } from '@tanstack/react-query'
+import { motion } from 'motion/react'
 
 export default function DashboardClient() {
 
@@ -28,9 +29,40 @@ export default function DashboardClient() {
             <div className="text-xs font-medium text-gray-400 uppercase tracking-widest px-8 py-4 border-b border-gray-200 flex justify-between items-center">
               Your Websites
             </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 divide-x divide-gray-200 border-b">
-            {data?.map((site: CardData) => <WebsiteCard key={site.id} site={site} />)}
-          </div>
+
+            {/* list */}
+            <motion.div
+              key={data?.length}
+                className="grid grid-cols-1 md:grid-cols-2"
+                initial="hidden"
+                animate="visible"
+              >
+              {data?.map((site: CardData, index: number) => (
+                <motion.div
+                  className="border-b border-gray-200 md:odd:border-r"
+                  key={site.id}
+                  variants={{
+                    hidden: {
+                      opacity: 0, 
+                      y: 20, 
+                      scale: 0.98, 
+                      filter: "blur(10px)"
+                    },
+                    visible: {
+                      opacity: 1,
+                      y: 0,
+                      scale: 1,
+                      filter: "blur(0px)",
+                      transition: { delay: Math.floor(index / 2) * 0.15 }
+                    }
+                  }}
+                >
+                  <WebsiteCard site={site} />
+                </motion.div>
+              ))}
+            </motion.div>
+
+          {/* </div> */}
         </div>
       </div>
     </div>
