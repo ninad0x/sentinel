@@ -2,7 +2,6 @@ import { CardData } from '@/lib/types'
 import { useQueryClient } from '@tanstack/react-query'
 import Link from 'next/link'
 import React from 'react'
-import { motion } from "motion/react"
 
 
 export default function WebsiteCard({ site }: {site: CardData}) {
@@ -17,20 +16,8 @@ export default function WebsiteCard({ site }: {site: CardData}) {
     }
 
     return (
-        <motion.div
-        initial={{
-            opacity: 0,
-            scale: 0.98,
-            filter: "blur(10px)"
-        }}
-        animate={{
-            opacity: 1,
-            scale: 1,
-            filter: "blur(0px)",
-        }}
-        transition={{
-            duration: 0.3
-        }}
+        <div
+        // className='relative group'    // uncomment for corner bracket animation
         >
         <Link
             key={site.id} 
@@ -67,6 +54,18 @@ export default function WebsiteCard({ site }: {site: CardData}) {
                 )}
             </div>
         </Link>
-        </motion.div>
+
+        {/* Corner bracket animation */}
+        {/* <div className="absolute duration-00 top-0 left-0 h-3 w-3 border-t border-l border-gray-500 group-hover:top-1 group-hover:left-1 " />
+
+        <div className="absolute duration-200 top-0 right-0 h-3 w-3 border-t border-r border-gray-500 group-hover:top-1 group-hover:right-1 " />
+
+        <div className="absolute duration-200 bottom-0 left-0 h-3 w-3 border-b border-l border-gray-500 group-hover:bottom-1 group-hover:left-1 " />
+
+        <div className="absolute duration-200 bottom-0 right-0 h-3 w-3 border-b border-r border-gray-500 group-hover:bottom-1 group-hover:right-1 " /> */}
+       
+
+
+        </div>
   )
 }
