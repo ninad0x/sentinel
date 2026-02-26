@@ -1,20 +1,27 @@
+import { auth } from "@repo/auth/server"
 import { prisma } from "@repo/db/client"
+import { headers } from "next/headers"
 
-export async function POST(request: Request) {
-    const body = await request.json()
 
-    if (!body.url) {
-        return Response.json({}, { status: 411 })
+export async function POST(req: Request) {
+    const session = await auth.api.getSession({
+        headers: await headers()
+    })
+
+    if (!session) {
+        return Response.json(null, { status: 401 })
     }
+
+    const body = await req.json()
 
     const website = await prisma.website.create({
         data: {
             name: body.name,
             url: body.url,
-            userId: "NYkXGBr8tilpGPcwWn5ju8fZ94eYs6nd",
+            userId: session.user.id,
             currentStatus: 0
         }
     })
 
-    return Response.json({ id: website.id })
+    return Response.json(website)
 }
