@@ -28,8 +28,8 @@ export const getDashboardData = async (userId: string) => {
     }
   })
 
-  const metricsMap = new Map(
-    metrics.map(m => [m.websiteId, m])
+  const metricsMap = new Map<string, typeof metrics[number]>(
+    metrics.map((m) => [m.websiteId, m])
   )
 
   return websites.map(site => {
