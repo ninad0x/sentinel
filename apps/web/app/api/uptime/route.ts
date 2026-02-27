@@ -7,6 +7,11 @@ import { NextResponse } from "next/server";
 export async function POST(req: Request) {
   const body = await req.json();
   const parsed = WebsiteTickBatch.safeParse(body);
+    const apiKey = req.headers.get("x-api-key");
+
+    if (apiKey !== process.env.INTERNAL_API_KEY) {
+        return new Response("Unauthorized", { status: 401 });
+    }
 
   if (!parsed.success) {
     console.log(parsed.error);
