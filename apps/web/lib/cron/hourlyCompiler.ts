@@ -13,7 +13,7 @@ export async function compileHourlyMetrics() {
 
   // if already compiled for this hour
   const existing = await prisma.websiteMetric.findFirst({
-    where: { windowStart: hourStart }
+    where: { windowStart: lastHourStart }
   })
   
   if (existing) {
@@ -24,7 +24,7 @@ export async function compileHourlyMetrics() {
   // group by
   const groups = await prisma.websiteTick.groupBy({
     by: ["websiteId", "regionId", "status"],
-    where: { createdAt: { gte: hourStart, lt: lastHourStart } },
+    where: { createdAt: { gte: lastHourStart, lt: hourStart } },
     _count: { _all: true },
     _avg: { responseTimeMs: true }
   })
@@ -67,8 +67,8 @@ export async function compileHourlyMetrics() {
   // format for DB entry
   const metrics = Array.from(metricsMap.entries()).map(([websiteId, m]) => ({
     websiteId,
-    windowStart: hourStart,
-    windowEnd: lastHourStart,
+    windowStart: lastHourStart,
+    windowEnd: hourStart,
     finalStatus: (m.up / m.total) >= 0.75 ? 200 : 500,
     uptimePercent: (m.up / m.total) * 100,
     avgResponseTimeMs: m.latCount > 0 ? Math.round(m.latSum / m.latCount) : null,
