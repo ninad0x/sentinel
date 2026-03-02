@@ -6,32 +6,32 @@ export async function compileHourlyMetrics() {
   const lastHourStart = new Date(hourStart.getTime() - 60 * 60 * 1000)
 
   // TEST
-  const minute = now.getMinutes()
-  const bucket = Math.floor(minute / 5) * 5
-  const windowStart = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours(), bucket, 0, 0)
-  const lastWindowStart = new Date(windowStart.getTime() - 5 * 60 * 1000)
+  // const minute = now.getMinutes()
+  // const bucket = Math.floor(minute / 15) * 15
+  // const windowStart = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours(), bucket, 0, 0)
+  // const lastWindowStart = new Date(windowStart.getTime() - 15 * 60 * 1000)
 
   // if already compiled for this hour
   const existing = await prisma.websiteMetric.findFirst({
-    where: { windowStart: lastWindowStart }
+    where: { windowStart: hourStart }
   })
   
   if (existing) {
-    console.log(`Metrics for ${lastWindowStart.toISOString()} already compiled`)
-    return { compiled: 0, window: lastWindowStart.toISOString(), skipped: true }
+    console.log(`Metrics for ${hourStart.toISOString()} already compiled`)
+    return { compiled: 0, window: hourStart.toISOString(), skipped: true }
   }
 
   // group by
   const groups = await prisma.websiteTick.groupBy({
     by: ["websiteId", "regionId", "status"],
-    where: { createdAt: { gte: lastWindowStart, lt: windowStart } },
+    where: { createdAt: { gte: hourStart, lt: lastHourStart } },
     _count: { _all: true },
     _avg: { responseTimeMs: true }
   })
 
   if (groups.length === 0) {
-    console.log(`No ticks found for ${lastWindowStart.toISOString()}`)
-    return { compiled: 0, window: lastWindowStart.toISOString(), noData: true }
+    console.log(`No ticks found for ${hourStart.toISOString()}`)
+    return { compiled: 0, window: hourStart.toISOString(), noData: true }
   }
 
   const metricsMap = new Map<string, {
@@ -67,8 +67,8 @@ export async function compileHourlyMetrics() {
   // format for DB entry
   const metrics = Array.from(metricsMap.entries()).map(([websiteId, m]) => ({
     websiteId,
-    windowStart: lastWindowStart,
-    windowEnd: windowStart,
+    windowStart: hourStart,
+    windowEnd: lastHourStart,
     finalStatus: (m.up / m.total) >= 0.75 ? 200 : 500,
     uptimePercent: (m.up / m.total) * 100,
     avgResponseTimeMs: m.latCount > 0 ? Math.round(m.latSum / m.latCount) : null,
@@ -77,7 +77,7 @@ export async function compileHourlyMetrics() {
   }))
 
   await prisma.websiteMetric.createMany({ data: metrics })
-  console.log(`Compiled ${metrics.length} hourly metrics for ${lastWindowStart.toISOString()}`)
+  console.log(`Compiled ${metrics.length} hourly metrics for ${hourStart.toISOString()}`)
 
-  return { compiled: metrics.length, window: lastWindowStart.toISOString() }
+  return { compiled: metrics.length, window: hourStart.toISOString() }
 }
