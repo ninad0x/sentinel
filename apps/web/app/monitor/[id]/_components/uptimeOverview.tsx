@@ -16,7 +16,7 @@ export default function UptimeOverview({ data }: MonitorProps) {
       </p>
       <div className="grid grid-cols-1 md:grid-cols-3 divide-x divide-gray-200 border-b border-gray-200">
         {items.map(item => (
-          <div key={item.label} className="px-8 py-10 flex flex-col gap-3">
+          <div key={item.label} className="px-8 py-8 flex flex-col gap-3">
             <span className="text-sm font-mono text-gray-500">{item.label}</span>
             <p className="text-3xl font-semibold text-gray-900 tracking-tight">
               {item.value.toFixed(2)}

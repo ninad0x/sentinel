@@ -7,6 +7,7 @@ import LatencyTrend from './latencyTrend'
 import UptimeOverview from './uptimeOverview'
 import IncidentTimeline from './incidentList'
 import { motion } from 'motion/react'
+import StatCards from './statCards'
 
 export default function MonitorDashboard({ id }: { id: string }) {
 
@@ -17,47 +18,47 @@ export default function MonitorDashboard({ id }: { id: string }) {
   })
 
   if (isLoading) return (
-        <div className="flex flex-col mx-auto h-full max-w-5xl bg-gray-50 border animate-pulse">
-            <div className="h-16 bg-gray-200 m-4 rounded" /> {/* header */}
-            <div className="h-32 bg-gray-200 m-4 rounded" /> {/* region cards */}
-            <div className="h-48 bg-gray-200 m-4 rounded" /> {/* graph */}
-            <div className="h-48 bg-gray-200 m-4 rounded" /> {/* graph */}
-        </div>
-    )
+    <div className="flex flex-col mx-auto h-full max-w-5xl bg-gray-50 border animate-pulse">
+        <div className="h-16 bg-gray-200 m-4 rounded" />
+        <div className="h-32 bg-gray-200 m-4 rounded" />
+        <div className="h-48 bg-gray-200 m-4 rounded" />
+        <div className="h-48 bg-gray-200 m-4 rounded" />
+    </div>
+)
 
   if (!data) return null
 
   return (
-        <div className="bg-gray-50/50">
-            <motion.div
-                key={data}  // trigger when data loads
-                className="flex flex-col mx-auto h-full max-w-5xl bg-gray-50 border"
-                initial="hidden"
-                animate="visible"
+    <div className="bg-gray-50/50">
+        <motion.div
+            key={data}  // trigger when data loads
+            className="flex flex-col mx-auto h-full max-w-5xl bg-gray-50 border"
+            initial="hidden"
+            animate="visible"
+            >
+            {[MonitorHeader, RegionCards, RegionalLatency, LatencyTrend, UptimeOverview, IncidentTimeline]
+                .map((Component, i) => (
+                <motion.div
+                    key={i}
+                    variants={{
+                        hidden: { 
+                            opacity: 0,
+                            y: 20,
+                            filter: "blur(8px)"
+                        },
+                        visible: {
+                            opacity: 1,
+                            y: 0,
+                            // transition: { delay: i * 0.10 },
+                            transition: { delay: i * 0.1, type: "spring", stiffness: 200, damping: 15 },
+                            filter: "blur(0px)"
+                        }
+                    }}
                 >
-                {[MonitorHeader, RegionCards, RegionalLatency, LatencyTrend, UptimeOverview, IncidentTimeline]
-                    .map((Component, i) => (
-                    <motion.div
-                        key={i}
-                        variants={{
-                            hidden: { 
-                                opacity: 0,
-                                y: 20,
-                                filter: "blur(8px)"
-                            },
-                            visible: {
-                                opacity: 1,
-                                y: 0,
-                                // transition: { delay: i * 0.10 },
-                                transition: { delay: i * 0.1, type: "spring", stiffness: 200, damping: 15 },
-                                filter: "blur(0px)"
-                            }
-                        }}
-                    >
-                        <Component data={data} />
-                    </motion.div>
-                ))}
+                    <Component data={data} />
                 </motion.div>
-        </div>
+            ))}
+            </motion.div>
+    </div>
     )
 }
