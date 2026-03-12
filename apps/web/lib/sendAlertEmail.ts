@@ -5,7 +5,7 @@ const resend = new Resend(process.env.RESEND_API_KEY)
 
 export async function sendAlertEmail(params: IncidentEmailParams) {
   await resend.emails.send({
-    from: "alerts@yourdomain.com",
+    from: "alerts@sentinel.ninad1.me",
     to: params.to,
     subject: `🔴 ${params.incidentType} outage detected on ${params.siteName}`,
     react: IncidentAlertEmail(params),
