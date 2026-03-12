@@ -1,7 +1,8 @@
-exports.handler = async (event: any) => {
+export const handler = async (event: any) => {
   const websites = JSON.parse(event.Records[0].body);
 
-  const BACKEND_URL = process.env.BACKEND_URL || "https://623085b8ec1b.ngrok-free.app";
+  // const BACKEND_URL = process.env.BACKEND_URL!;
+  const BACKEND_URL = process.env.STAGING_URL!;
   
   const results = await Promise.all(
     
@@ -32,9 +33,15 @@ exports.handler = async (event: any) => {
 
   console.log(`Checked ${results.length} sites.`);
 
-  await fetch(`${BACKEND_URL}/uptime`, {
+    console.log("URL:", BACKEND_URL);
+    console.log("KEY:", process.env.INTERNAL_API_KEY);
+
+  await fetch(`${BACKEND_URL}/api/uptime`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { 
+      "Content-Type": "application/json",
+      "x-api-key": process.env.INTERNAL_API_KEY!
+     },
     body: JSON.stringify({
       region: process.env.AWS_REGION,
       results, 

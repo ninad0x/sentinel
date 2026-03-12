@@ -2,11 +2,18 @@ import { SQSClient, SendMessageCommand } from "@aws-sdk/client-sqs";
 
 const sqs = new SQSClient({});
 
-const BACKEND_URL = process.env.BACKEND_URL || "https://623085b8ec1b.ngrok-free.app";
+// const BACKEND_URL = process.env.BACKEND_URL!;
+const BACKEND_URL = process.env.STAGING_URL!;
 
 export const handler = async () => {
   try {
-    const response = await fetch(`${BACKEND_URL}/websites`, { 
+    console.log("URL:", BACKEND_URL);
+    console.log("KEY:", process.env.INTERNAL_API_KEY);
+    
+    const response = await fetch(`${BACKEND_URL}/api/websites`, {
+      headers: {
+        "x-api-key": process.env.INTERNAL_API_KEY!
+      }, 
       signal: AbortSignal.timeout(5000)
     });
 
