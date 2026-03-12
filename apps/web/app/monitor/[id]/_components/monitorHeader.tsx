@@ -1,6 +1,7 @@
 import React from 'react'
 import { MonitorProps } from '@/lib/types'
 import { motion } from 'motion/react'
+import StatusBadge from '@/components/ui/statusBadge'
 
 
 export default function MonitorHeader({ data }: MonitorProps) {
@@ -14,20 +15,8 @@ return (
       </div>
 
       <div className='flex flex-col items-end'>
-        <span
-          className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-md ${
-            data.website.currentStatus < 400
-              ? "bg-emerald-50 text-emerald-700"
-              : "bg-red-50 text-red-600"
-          }`}>
-            <span
-              className={`w-1.5 h-1.5 rounded-full text-xl animate-pulse ${
-                data.website.currentStatus < 400 ? "bg-emerald-500" : "bg-red-500"
-              }`}
-            />
-            {data.website.currentStatus < 400 ? "Operational" : "Down"}
-        </span>
-        <span className='text-sm text-gray-700 mt-0.5'>
+        <StatusBadge status={data.website.currentStatus} />
+        <span className='text-sm font-mono text-gray-600 mt-1.5'>
           Last checked: {new Date(data.website.lastChecked!).toLocaleDateString()}
         </span>
       </div>

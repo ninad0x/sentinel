@@ -39,12 +39,28 @@ export async function POST(req: Request) {
       details: r.details
     }));
 
+    const updateLastCheck = data.results.map(r => ({
+      id: r.id,
+      lastChecked: new Date(r.timestamp)
+    }))
+
     const batch = await prisma.websiteTick.createMany({ data: ticks });
+
+    await Promise.all(
+      updateLastCheck.map(e => {
+        prisma.website.update({
+          where: { id: e.id },
+          data: { lastChecked: e.lastChecked}
+        })
+      })
+    )
+
     console.log(`inserted: ${batch.count} from ${region.name}`);
 
     const websiteIds = [...new Set(ticks.map(t => t.websiteId))];
 
-    Promise.all(websiteIds.map(id => checkIncidentForWebsite(id)))
+    Promise.all(
+      websiteIds.map(id => checkIncidentForWebsite(id)),)
       .catch(err => console.error("Incident check error: ", err))
 
     return NextResponse.json({ success: true });

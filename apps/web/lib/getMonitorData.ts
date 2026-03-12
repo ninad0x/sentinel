@@ -1,7 +1,7 @@
 import { prisma } from "@repo/db/client"
 import { MonitorData } from "./types"
 
-const avg = (arr: number[]) => arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : 100
+const avg = (arr: number[]) => arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : 0
 
 export const getMonitorData = async (websiteId: string): Promise<MonitorData | null> => {
   console.log("monitor data called");
@@ -13,7 +13,7 @@ export const getMonitorData = async (websiteId: string): Promise<MonitorData | n
 
     if (!website) return null
 
-    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000)
+    const oneDayAgo = new Date(Date.now() - 1000 * 60 * 60 * 1000)
     const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
 
@@ -32,13 +32,14 @@ export const getMonitorData = async (websiteId: string): Promise<MonitorData | n
       }),
 
       prisma.websiteTick.findMany({
-        where: { websiteId, /* createdAt: { gte: oneDayAgo } */ },
+        where: { websiteId, createdAt: { gte: oneDayAgo } },
         select: { createdAt: true, responseTimeMs: true, region: { select: { name: true } } },
-        orderBy: { createdAt: "asc" }
+        orderBy: { createdAt: "asc" },
+        take: 30
       }),
     ])
 
-    // Derive region summary from ticks (no extra query needed)
+    // Derive region summary from ticks
     const regionMap = new Map<string, { totalMs: number; totalChecks: number }>()
 
     for (const tick of regionTicks) {
@@ -62,10 +63,17 @@ export const getMonitorData = async (websiteId: string): Promise<MonitorData | n
       incidents,
       regionTicks,
       regionSummary,
+      
       uptime: {
         h24: avg(metrics.filter(m => m.windowStart >= oneDayAgo).map(m => m.uptimePercent)),
         d7: avg(metrics.filter(m => m.windowStart >= sevenDaysAgo).map(m => m.uptimePercent)),
         d30: avg(metrics.map(m => m.uptimePercent))
+      },
+      
+      latency: {
+        h24: avg(metrics.filter(m => m.windowStart >= oneDayAgo).map(m => m.avgResponseTimeMs ?? 0)),
+        d7: avg(metrics.filter(m => m.windowStart >= sevenDaysAgo).map(m => m.avgResponseTimeMs ?? 0)),
+        d30: avg(metrics.map(m => m.avgResponseTimeMs ?? 0)),
       }
     }
   }

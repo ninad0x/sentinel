@@ -71,6 +71,12 @@ export type MonitorData = {
     d30: number
   }
 
+  latency: {
+    h24: number
+    d7: number
+    d30: number
+  }
+
 }
 
 export type CardData = {

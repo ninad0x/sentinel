@@ -53,28 +53,41 @@ export async function compileHourlyMetrics() {
 
     m.total += g._count._all
 
-    if (g.status < 400) {
+    if (g.status >= 200 && g.status < 400) {
+
       m.up += g._count._all
+
       if (g._avg.responseTimeMs) {
         m.latSum += g._avg.responseTimeMs * g._count._all
         m.latCount += g._count._all
       }
-    } else {
+
+    } else if (g.status >= 400) {
       m.downRegions.add(g.regionId)
     }
   }
 
+  
+
   // format for DB entry
-  const metrics = Array.from(metricsMap.entries()).map(([websiteId, m]) => ({
-    websiteId,
-    windowStart: lastHourStart,
-    windowEnd: hourStart,
-    finalStatus: (m.up / m.total) >= 0.75 ? 200 : 500,
-    uptimePercent: (m.up / m.total) * 100,
-    avgResponseTimeMs: m.latCount > 0 ? Math.round(m.latSum / m.latCount) : null,
-    regionsDownCount: m.downRegions.size,
-    regionsDownList: Array.from(m.downRegions)
-  }))
+  const metrics = Array.from(metricsMap.entries()).map(([websiteId, m]) => {
+    const ratio = m.up / m.total
+
+    let finalStatus = 500
+    if (ratio >= 0.85) finalStatus = 200
+    else if (ratio >= 0.75) finalStatus = 206
+
+    return {
+      websiteId,
+      windowStart: lastHourStart,
+      windowEnd: hourStart,
+      finalStatus,
+      uptimePercent: ratio * 100,
+      avgResponseTimeMs: m.latCount > 0 ? Math.round(m.latSum / m.latCount) : null,
+      regionsDownCount: m.downRegions.size,
+      regionsDownList: Array.from(m.downRegions)
+    }
+  })
 
   await prisma.websiteMetric.createMany({ data: metrics })
   console.log(`Compiled ${metrics.length} hourly metrics for ${hourStart.toISOString()}`)

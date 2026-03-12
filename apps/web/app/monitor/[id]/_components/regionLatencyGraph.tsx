@@ -29,13 +29,13 @@ export default function RegionalLatency({ data }: MonitorProps) {
     <div className="border-b border-gray-200">
       
       {/* Region toggles */}
-      <div className="flex gap-2 px-8 py-4 items-center">
+      <div className="flex gap-2 px-8 py-6 items-center">
         {regions.map((r, i) => (
           <button
             key={r}
             onClick={() => toggle(r)}
             className={`cursor-pointer text-xs px-3 py-1 rounded-lg border transition-all ${
-              hidden.has(r) ? "border-gray-300 text-gray-400" : "border-gray-800 bg-gray-700 text-white"
+              hidden.has(r) ? "border-gray-300 text-gray-400" : "border-gray-800 bg-zinc-800 text-white"
             }`}
           >
             <span className="inline-block w-1.5 h-1.5 rounded-full mr-1.5" style={{ background: COLORS[i % COLORS.length] }} />

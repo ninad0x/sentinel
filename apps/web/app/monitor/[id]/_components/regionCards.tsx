@@ -1,5 +1,6 @@
 import React from 'react'
 import { MonitorProps } from '@/lib/types'
+import StatusBadge from '@/components/ui/statusBadge'
 
 
 export default function RegionCards({ data }: MonitorProps) {
@@ -14,20 +15,7 @@ return (
 
             <div className="flex items-center justify-between">
               <span className="text-sm font-mono text-gray-500">{region.name}</span>
-
-              <span
-                className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-md ${
-                  data.website.currentStatus < 400
-                    ? "bg-emerald-50 text-emerald-700"
-                    : "bg-red-50 text-red-600"
-                }`}>
-                  <span
-                    className={`w-1.5 h-1.5 rounded-full text-xl animate-pulse ${
-                      data.website.currentStatus < 400 ? "bg-emerald-500" : "bg-red-500"
-                    }`}
-                  />
-                  {data.website.currentStatus < 400 ? "Operational" : "Down"}
-              </span>
+                <StatusBadge status={data.website.currentStatus} />
               
             </div>
 
