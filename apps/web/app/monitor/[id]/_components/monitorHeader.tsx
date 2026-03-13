@@ -17,7 +17,15 @@ return (
       <div className='flex flex-col items-end'>
         <StatusBadge status={data.website.currentStatus} />
         <span className='text-sm font-mono text-gray-600 mt-1.5'>
-          Last checked: {new Date(data.website.lastChecked!).toLocaleString()}
+          Last checked: {
+            data.website.lastChecked === null 
+            ? "--:--"
+            : new Date(data.website.lastChecked!).toLocaleString("en-IN", {
+                timeZone: "Asia/Kolkata",
+                dateStyle: "medium",
+                timeStyle: "short"
+              })
+          }
         </span>
       </div>
 

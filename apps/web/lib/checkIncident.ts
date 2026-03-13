@@ -49,6 +49,7 @@ export async function checkIncidentForWebsite(websiteId: string): Promise<void> 
     const downRegions = regions.filter(t => t.status === 0 || t.status >= 400)
     const isDown = downRegions.length >= 2
 
+
     // Check for active incident
     const incident = await prisma.incident.findFirst({
       where: { websiteId, endedAt: null }
@@ -62,6 +63,7 @@ export async function checkIncidentForWebsite(websiteId: string): Promise<void> 
       downRegions: downRegions.map(t => t.region.name),
       dashboardUrl: `${process.env.NEXT_PUBLIC_APP_URL}/monitor/${websiteId}`,
     }
+
 
     // Create incident if 2+ regions down
     if (isDown && !incident) {
@@ -82,6 +84,23 @@ export async function checkIncidentForWebsite(websiteId: string): Promise<void> 
         status: "DOWN"
       })
 
+    }
+
+    else if (incident && isDown) {
+      const newType = downRegions.length === regions.length ? "Global" : "Regional"
+
+      if (incident.type !== newType) {
+        await prisma.incident.update({
+          where: { id: incident.id },
+          data: { type: newType }
+        })
+
+        await sendAlertEmail({
+          ...baseEmailBody,
+          startedAt: incident.startedAt,
+          status: "DOWN"
+        })
+      }
     }
 
     // Resolve incident if back up

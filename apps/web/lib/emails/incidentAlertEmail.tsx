@@ -99,7 +99,13 @@ export default function IncidentAlertEmail({
 
             <Row
               label={isResolved ? "Recovered at" : "Detected at"}
-              value={startedAt.toLocaleString()}
+              value={
+                startedAt.toLocaleString("en-IN", {
+                  timeZone: "Asia/Kolkata",
+                  dateStyle: "medium",
+                  timeStyle: "short"
+                })
+              }
             />
 
             <Row

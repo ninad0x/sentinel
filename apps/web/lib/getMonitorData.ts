@@ -33,7 +33,7 @@ export const getMonitorData = async (websiteId: string): Promise<MonitorData | n
 
       prisma.websiteTick.findMany({
         where: { websiteId, createdAt: { gte: oneDayAgo } },
-        select: { createdAt: true, responseTimeMs: true, region: { select: { name: true } } },
+        select: { createdAt: true, responseTimeMs: true, region: { select: { name: true } }, status: true },
         orderBy: { createdAt: "asc" },
         take: 30
       }),

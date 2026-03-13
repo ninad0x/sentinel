@@ -53,6 +53,7 @@ export type MonitorData = {
 
   regionTicks: Prisma.WebsiteTickGetPayload<{
     select: {
+      status: true
       createdAt: true
       responseTimeMs: true
       region: { select: { name: true } }
