@@ -60,7 +60,7 @@ export async function checkIncidentForWebsite(websiteId: string): Promise<void> 
       siteUrl: website.url,
       incidentType: downRegions.length === regions.length ? "Global" : "Regional",
       downRegions: downRegions.map(t => t.region.name),
-      dashboardUrl: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/${websiteId}`,
+      dashboardUrl: `${process.env.NEXT_PUBLIC_APP_URL}/monitor/${websiteId}`,
     }
 
     // Create incident if 2+ regions down
