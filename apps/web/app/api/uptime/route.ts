@@ -5,13 +5,14 @@ import { prisma } from "@repo/db/client";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
+
+  const apiKey = req.headers.get("x-api-key");
+  if (apiKey !== process.env.INTERNAL_API_KEY) {
+    return new Response("Unauthorized", { status: 401 });
+  }
+
   const body = await req.json();
   const parsed = WebsiteTickBatch.safeParse(body);
-    const apiKey = req.headers.get("x-api-key");
-
-    if (apiKey !== process.env.INTERNAL_API_KEY) {
-        return new Response("Unauthorized", { status: 401 });
-    }
 
   if (!parsed.success) {
     console.log(parsed.error);
@@ -47,12 +48,12 @@ export async function POST(req: Request) {
     const batch = await prisma.websiteTick.createMany({ data: ticks });
 
     await Promise.all(
-      updateLastCheck.map(e => {
+      updateLastCheck.map(e => 
         prisma.website.update({
           where: { id: e.id },
           data: { lastChecked: e.lastChecked}
         })
-      })
+      )
     )
 
     console.log(`inserted: ${batch.count} from ${region.name}`);
