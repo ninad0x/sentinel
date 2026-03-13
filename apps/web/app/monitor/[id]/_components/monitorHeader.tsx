@@ -17,7 +17,7 @@ return (
       <div className='flex flex-col items-end'>
         <StatusBadge status={data.website.currentStatus} />
         <span className='text-sm font-mono text-gray-600 mt-1.5'>
-          Last checked: {new Date(data.website.lastChecked!).toLocaleDateString()}
+          Last checked: {new Date(data.website.lastChecked!).toLocaleString()}
         </span>
       </div>
 
