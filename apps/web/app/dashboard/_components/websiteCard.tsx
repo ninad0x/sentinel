@@ -27,10 +27,10 @@ export default function WebsiteCard({ site }: {site: CardData}) {
             className="px-8 py-6 hover:bg-gray-50 transition flex flex-col gap-5"
             >
             <div className="flex items-center justify-between">
+                <p className="font-semibold text-lg text-gray-900 tracking-tight">{site.name}</p>
                 <StatusBadge status={site.currentStatus} />
                 
             </div>
-            
             <p className="text-sm font-mono text-gray-400">{site.url}</p>
             
             <div className="flex gap-7 text-sm">
