@@ -65,6 +65,11 @@ export async function checkIncidentForWebsite(websiteId: string): Promise<void> 
         }
       })
 
+      await prisma.website.update({
+        where: { id: websiteId },
+        data: { currentStatus: 500 }
+      })
+
       await sendAlertEmail({
         ...baseEmail,
         startedAt: new Date(),
@@ -98,9 +103,15 @@ export async function checkIncidentForWebsite(websiteId: string): Promise<void> 
         data: { endedAt: new Date(), status: "Resolved" }
       })
 
+      await prisma.website.update({
+        where: { id: websiteId },
+        data: { currentStatus: 200 }
+      })
+
       await sendAlertEmail({
         ...baseEmail,
-        startedAt: incident.startedAt,
+        incidentType: incident.type,
+        startedAt: new Date(),
         status: "RESOLVED"
       })
     }
