@@ -1,5 +1,8 @@
 import * as cdk from 'aws-cdk-lib/core';
 import { UptimeStack } from '../lib/cdk-stack';
+import dotenv from "dotenv"
+
+dotenv.config()
 
 const app = new cdk.App();
 const regions = [

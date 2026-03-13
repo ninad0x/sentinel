@@ -24,7 +24,9 @@
   "dependencies": {
     "@aws-sdk/client-sqs": "^3.974.0",
     "@aws-sdk/client-ssm": "^3.948.0",
+    "@types/dotenv": "^8.2.3",
     "aws-cdk-lib": "2.215.0",
-    "constructs": "^10.0.0"
+    "constructs": "^10.0.0",
+    "dotenv": "^17.3.1"
   }
 }
