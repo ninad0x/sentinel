@@ -42,7 +42,8 @@ export async function POST(req: Request) {
 
     const updateLastCheck = data.results.map(r => ({
       id: r.id,
-      lastChecked: new Date(r.timestamp)
+      lastChecked: new Date(r.timestamp),
+      currentStatus: r.status
     }))
 
     const batch = await prisma.websiteTick.createMany({ data: ticks });
@@ -51,7 +52,10 @@ export async function POST(req: Request) {
       updateLastCheck.map(e => 
         prisma.website.update({
           where: { id: e.id },
-          data: { lastChecked: e.lastChecked}
+          data: { 
+            lastChecked: e.lastChecked,
+            currentStatus: e.currentStatus
+          }
         })
       )
     )
