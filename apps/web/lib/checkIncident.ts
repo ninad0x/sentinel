@@ -6,120 +6,106 @@ export async function checkIncidentForWebsite(websiteId: string): Promise<void> 
   const WINDOW_MS = 3 * 60 * 1000
   const cutoff = new Date(Date.now() - WINDOW_MS)
 
-
   try {
-    // Get recent ticks
     const ticks = await prisma.websiteTick.findMany({
-      where: {
-        websiteId,
-        createdAt: { gte: cutoff }
-      },
+      where: { websiteId, createdAt: { gte: cutoff } },
       orderBy: { createdAt: "desc" },
       include: {
-        region: {
-          select: { name: true }
-        },
-        website: {
-          include: {
-            user: {
-              select: { email: true }
-            }
-          }
-        }
+        region: { select: { name: true } },
+        website: { include: { user: { select: { email: true } } } }
       }
     })
 
-    if (ticks.length === 0) return;
-    
+    if (ticks.length === 0) return
+
     const website = ticks[0]!.website
 
-    // Latest tick per region
+    // latest tick per region
     const byRegion = new Map<string, typeof ticks[number]>()
     for (const tick of ticks) {
-      if (!byRegion.has(tick.regionId)) {
-        byRegion.set(tick.regionId, tick)
-      }
+      if (!byRegion.has(tick.regionId)) byRegion.set(tick.regionId, tick)
     }
 
-    // Need at least 2 regions
-    if (byRegion.size < 2) return
-
-    // Count down regions (status >= 400)
     const regions = Array.from(byRegion.values())
+    if (regions.length < 2) return
+
     const downRegions = regions.filter(t => t.status === 0 || t.status >= 400)
-    const isDown = downRegions.length >= 2
 
+    const total = regions.length
+    const down = downRegions.length
 
-    // Check for active incident
+    let state: "UP" | "REGIONAL" | "GLOBAL"
+
+    if (down === 0) state = "UP"
+    else if (down === total) state = "GLOBAL"
+    else if (down >= 2) state = "REGIONAL"
+    else state = "UP"
+
     const incident = await prisma.incident.findFirst({
       where: { websiteId, endedAt: null }
     })
 
-    const baseEmailBody: Omit<IncidentEmailParams, "startedAt" | "status" > = {
+    const baseEmail: Omit<IncidentEmailParams, "startedAt" | "status"> = {
       to: website.user.email,
       siteName: website.name,
       siteUrl: website.url,
-      incidentType: downRegions.length === regions.length ? "Global" : "Regional",
+      incidentType: state === "GLOBAL" ? "Global" : "Regional",
       downRegions: downRegions.map(t => t.region.name),
       dashboardUrl: `${process.env.NEXT_PUBLIC_APP_URL}/monitor/${websiteId}`,
     }
 
-
-    // Create incident if 2+ regions down
-    if (isDown && !incident) {
-      // const 
+    // CREATE INCIDENT
+    if (!incident && state !== "UP") {
       await prisma.incident.create({
         data: {
           websiteId,
-          type: downRegions.length === regions.length ? "Global" : "Regional",
+          type: state === "GLOBAL" ? "Global" : "Regional",
           status: "Ongoing",
           cause: downRegions.map(t => t.region.name).join(", ")
         }
       })
-      console.log(`INCIDENT: ${websiteId} (${downRegions.length}/${regions.length} down)`)
-      
+
       await sendAlertEmail({
-        ...baseEmailBody,
+        ...baseEmail,
         startedAt: new Date(),
         status: "DOWN"
       })
-
+      return
     }
 
-    else if (incident && isDown) {
-      const newType = downRegions.length === regions.length ? "Global" : "Regional"
+    // UPGRADE REGIONAL TO GLOBAL
+    if (incident && incident.type === "Regional" && state === "GLOBAL" ) {
+      await prisma.incident.update({
+        where: { id: incident.id },
+        data: {
+          type: "Global",
+          cause: downRegions.map(t => t.region.name).join(", ")
+        }
+      })
 
-      if (incident.type !== newType) {
-        await prisma.incident.update({
-          where: { id: incident.id },
-          data: { type: newType }
-        })
-
-        await sendAlertEmail({
-          ...baseEmailBody,
-          startedAt: incident.startedAt,
-          status: "DOWN"
-        })
-      }
+      await sendAlertEmail({
+        ...baseEmail,
+        startedAt: incident.startedAt,
+        status: "DOWN"
+      })
+      return
     }
 
-    // Resolve incident if back up
-    if (!isDown && incident) {
-
+    // RESOLVE INCIDENT
+    if (incident && state === "UP") {
       await prisma.incident.update({
         where: { id: incident.id },
         data: { endedAt: new Date(), status: "Resolved" }
       })
-      console.log(`RESOLVED: ${websiteId}`)
 
       await sendAlertEmail({
-        ...baseEmailBody,
+        ...baseEmail,
         startedAt: incident.startedAt,
         status: "RESOLVED"
       })
     }
 
-  } catch (error) {
-    console.error(`Error checking ${websiteId}:`, error)
+  } catch (err) {
+    console.error(`Error checking ${websiteId}:`, err)
   }
 }
