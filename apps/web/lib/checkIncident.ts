@@ -55,28 +55,34 @@ export async function checkIncidentForWebsite(websiteId: string): Promise<void> 
     }
 
     // CREATE INCIDENT
-    if (!incident && state !== "UP") {
-      await prisma.incident.create({
-        data: {
-          websiteId,
-          type: state === "GLOBAL" ? "Global" : "Regional",
-          status: "Ongoing",
-          cause: downRegions.map(t => t.region.name).join(", ")
+    
+      if (!incident && state !== "UP") {
+        try {
+          await prisma.incident.create({
+            data: {
+              websiteId,
+              type: state === "GLOBAL" ? "Global" : "Regional",
+              status: "Ongoing",
+              cause: downRegions.map(t => t.region.name).join(", ")
+            }
+          })
+        } catch (err: any) {
+          if (err.code !== "P2002") throw err
         }
-      })
 
-      await prisma.website.update({
-        where: { id: websiteId },
-        data: { currentStatus: 500 }
-      })
+        await prisma.website.update({
+          where: { id: websiteId },
+          data: { currentStatus: 500 }
+        })
 
-      await sendAlertEmail({
-        ...baseEmail,
-        startedAt: new Date(),
-        status: "DOWN"
-      })
-      return
-    }
+        await sendAlertEmail({
+          ...baseEmail,
+          startedAt: new Date(),
+          status: "DOWN"
+        })
+        return
+      }
+
 
     // UPGRADE REGIONAL TO GLOBAL
     if (incident && incident.type === "Regional" && state === "GLOBAL" ) {
