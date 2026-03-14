@@ -1,72 +1,87 @@
 "use client"
 
 import { MonitorProps } from "@/lib/types"
-
+import { ArrowRight } from "lucide-react"
 
 export default function IncidentTimeline({ data }: MonitorProps) {
-  if (!data.incidents.length) {
-    return (
-      <div>
-        <p className="text-xs font-medium text-gray-400 uppercase tracking-widest px-8 py-4 border-b border-gray-200">
-          Incident Timeline
-        </p>
-        <p className="text-xs font-mono text-gray-400 px-8 py-6">No incidents recorded.</p>
-      </div>
-    )
-  }
-
   return (
     <div>
       <p className="text-xs font-medium text-gray-400 uppercase tracking-widest px-8 py-4 border-b border-gray-200">
         Incident Timeline
       </p>
-      <div className="divide-y divide-gray-200">
-        {data.incidents.map((incident) => {
-          const duration = incident.endedAt
-            ? Math.round(
-                (new Date(incident.endedAt).getTime() - new Date(incident.startedAt).getTime()) / 60000
-              )
-            : null
 
-          const isResolved = !!incident.endedAt
+      {!data.incidents.length ? (
+        <p className="text-xs font-mono text-gray-400 px-8 py-6">No incidents recorded.</p>
+      ) : (
+        <div className="px-8 py-6">
+          <div className="relative">
+            {/* Vertical line */}
+            <div className="absolute left-1.75 top-2 bottom-2 w-px bg-gray-200" />
 
-          return (
-            <div key={incident.id} className="px-8 py-6 flex justify-between items-start">
-              <div className="flex flex-col gap-2">
-                <div className="flex items-center gap-2">
-                  <span className={`w-1.5 h-1.5 rounded-full ${isResolved ? "bg-gray-400" : "bg-red-500 animate-pulse"}`} />
-                  <span className="text-sm font-semibold text-gray-900 tracking-tight">
-                    {incident.status}
-                  </span>
-                  <span className="text-xs font-mono text-gray-400">{incident.type}</span>
-                </div>
+            <div className="flex flex-col gap-8">
+              {data.incidents.map((incident) => {
+                const isResolved = !!incident.endedAt
+                const duration = incident.endedAt
+                  ? Math.round(
+                      (new Date(incident.endedAt).getTime() - new Date(incident.startedAt).getTime()) / 60000
+                    )
+                  : null
 
-                {incident.cause && (
-                  <p className="text-xs text-gray-500">{incident.cause}</p>
-                )}
+                return (
+                  <div key={incident.id} className="relative flex gap-6">
+                    {/* Dot */}
+                    <div className={`relative z-10 mt-1 w-3.5 h-3.5 rounded-full border-2 shrink-0 ${
+                      isResolved
+                        ? "bg-white border-green-400"
+                        : "bg-red-500 border-red-300 animate-pulse"
+                    }`} />
 
-                {duration && (
-                  <p className="text-xs font-mono text-gray-400">
-                    {duration} min
-                    <span className="text-gray-300 ml-1">duration</span>
-                  </p>
-                )}
-              </div>
+                    {/* Content */}
+                    <div className="flex-1 pb-2">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className={`text-xs font-semibold uppercase tracking-wide ${isResolved ? "text-green-600" : "text-red-500"}`}>
+                          {incident.status}
+                        </span>
+                        <span className="text-xs font-mono text-gray-400 bg-gray-100 px-2 py-0.5 rounded">
+                          {incident.type}
+                        </span>
+                      </div>
 
-              <div className="flex flex-col gap-1 text-right">
-                <span className="text-xs font-mono text-gray-500">
-                  {new Date(incident.startedAt).toLocaleString()}
-                </span>
-                {incident.endedAt && (
-                  <span className="text-xs font-mono text-gray-400">
-                    ended {new Date(incident.endedAt).toLocaleString()}
-                  </span>
-                )}
-              </div>
+                      {incident.cause && (
+                        <p className="text-sm text-gray-600 mb-2">
+                          Affected: {incident.cause.split(", ").map(r => (
+                            <span key={r} className="mx-px bg-gray-100 px-2 py-0.5 rounded text-xs font-mono text-gray-600">{r}</span>
+                          ))}
+                        </p>
+                      )}
+
+                      <div className="flex flex-wrap items-center gap-4 text-xs font-mono text-gray-400 underline">
+                        <span>{new Date(incident.startedAt).toLocaleString("en-IN", {
+                          timeZone: "Asia/Kolkata",
+                          dateStyle: "medium",
+                          timeStyle: "short"
+                        })}</span>
+                        <ArrowRight size={14}/>
+                        {incident.endedAt && (
+                          <span> {new Date(incident.endedAt).toLocaleString("en-IN", {
+                          timeZone: "Asia/Kolkata",
+                          dateStyle: "medium",
+                          timeStyle: "short"
+                        })}</span>
+                        )}
+
+                        {duration && (
+                          <span className="text-gray-500">{duration} min</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )
+              })}
             </div>
-          )
-        })}
-      </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

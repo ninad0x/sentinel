@@ -7,7 +7,6 @@ import LatencyTrend from './latencyTrend'
 import UptimeOverview from './uptimeOverview'
 import IncidentTimeline from './incidentList'
 import { motion } from 'motion/react'
-import StatCards from './statCards'
 
 export default function MonitorDashboard({ id }: { id: string }) {
 
@@ -36,7 +35,7 @@ export default function MonitorDashboard({ id }: { id: string }) {
             initial="hidden"
             animate="visible"
             >
-            {[MonitorHeader, RegionCards, RegionalLatency, LatencyTrend, UptimeOverview, IncidentTimeline]
+            {[MonitorHeader, RegionCards, RegionalLatency, LatencyTrend , UptimeOverview, IncidentTimeline]
                 .map((Component, i) => (
                 <motion.div
                     key={i}

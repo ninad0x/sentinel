@@ -14,7 +14,8 @@ export default function RegionCards({ data }: MonitorProps) {
 
           const tick = data.regionTicks
             .filter(t => t.region.name === region.name)
-            .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())[0]
+            .sort((a, b) => 
+              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0]
 
           return (
           <div key={region.name} className="px-8 py-6 flex flex-col gap-3">
