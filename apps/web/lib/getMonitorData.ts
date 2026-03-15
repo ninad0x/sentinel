@@ -21,8 +21,9 @@ export const getMonitorData = async (websiteId: string): Promise<MonitorData | n
 
       prisma.websiteMetric.findMany({
         where: { websiteId, windowStart: { gte: thirtyDaysAgo } },
-        select: { windowStart: true, uptimePercent: true, avgResponseTimeMs: true, regionsDownCount: true, regionsDownList: true },
-        orderBy: { windowStart: "asc" }
+        select: { windowStart: true, windowEnd: true, uptimePercent: true, avgResponseTimeMs: true, regionsDownCount: true, regionsDownList: true },
+        orderBy: { windowStart: "asc" },
+        take: 20
       }),
 
       prisma.incident.findMany({
@@ -35,7 +36,7 @@ export const getMonitorData = async (websiteId: string): Promise<MonitorData | n
         where: { websiteId, createdAt: { gte: oneDayAgo } },
         select: { createdAt: true, responseTimeMs: true, region: { select: { name: true } }, status: true },
         orderBy: { createdAt: "asc" },
-        take: 30
+        take: 60
       }),
     ])
 
@@ -65,14 +66,14 @@ export const getMonitorData = async (websiteId: string): Promise<MonitorData | n
       regionSummary,
       
       uptime: {
-        h24: avg(metrics.filter(m => m.windowStart >= oneDayAgo).map(m => m.uptimePercent)),
-        d7: avg(metrics.filter(m => m.windowStart >= sevenDaysAgo).map(m => m.uptimePercent)),
+        h24: avg(metrics.filter(m => m.windowEnd >= oneDayAgo).map(m => m.uptimePercent)),
+        d7: avg(metrics.filter(m => m.windowEnd >= sevenDaysAgo).map(m => m.uptimePercent)),
         d30: avg(metrics.map(m => m.uptimePercent))
       },
       
       latency: {
-        h24: avg(metrics.filter(m => m.windowStart >= oneDayAgo).map(m => m.avgResponseTimeMs ?? 0)),
-        d7: avg(metrics.filter(m => m.windowStart >= sevenDaysAgo).map(m => m.avgResponseTimeMs ?? 0)),
+        h24: avg(metrics.filter(m => m.windowEnd >= oneDayAgo).map(m => m.avgResponseTimeMs ?? 0)),
+        d7: avg(metrics.filter(m => m.windowEnd >= sevenDaysAgo).map(m => m.avgResponseTimeMs ?? 0)),
         d30: avg(metrics.map(m => m.avgResponseTimeMs ?? 0)),
       }
     }
