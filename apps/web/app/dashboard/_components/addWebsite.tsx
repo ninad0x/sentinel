@@ -25,7 +25,7 @@ export function AddWebsite() {
           <DialogHeader>
             <DialogTitle className="">Add Website</DialogTitle>
             <DialogDescription>
-              Added website will be checked every 2 mins.
+              Added website will be checked every 3 mins.
             </DialogDescription>
           </DialogHeader>
           <FieldGroup>

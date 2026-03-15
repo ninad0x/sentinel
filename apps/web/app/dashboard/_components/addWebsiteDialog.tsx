@@ -73,7 +73,7 @@ export function AddWebsite() {
       <DialogContent className="sm:max-w-sm rounded-lg space-y-2">
         <DialogHeader>
           <DialogTitle>Add Website</DialogTitle>
-          <DialogDescription>Added website will be checked every 2 mins.</DialogDescription>
+          <DialogDescription>Added website will be checked every 3 mins.</DialogDescription>
         </DialogHeader>
         <FieldGroup>
           <Field>
