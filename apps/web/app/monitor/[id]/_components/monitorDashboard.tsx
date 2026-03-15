@@ -13,7 +13,8 @@ export default function MonitorDashboard({ id }: { id: string }) {
   const { data, isLoading } = useQuery({
     queryKey: ['monitor', id],
     queryFn: () => fetch(`/api/monitor/${id}`).then(r => r.json()),
-    staleTime: 30_000
+    staleTime: 30_000,
+    refetchInterval: 30_000,
   })
 
   if (isLoading) return (
