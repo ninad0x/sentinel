@@ -67,6 +67,7 @@ export default function RegionalLatency({ data }: MonitorProps) {
             <Tooltip
               contentStyle={{ border: "1px solid #e5e7eb", borderRadius: "8px", fontSize: "12px" }}
               labelFormatter={t => new Date(Number(t)).toLocaleTimeString()}
+              formatter={(value, name) => [`${value} ms`, name]}
             />
 
             {regions.filter(r => !hidden.has(r)).map((r, i) => (

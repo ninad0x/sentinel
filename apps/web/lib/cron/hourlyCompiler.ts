@@ -62,7 +62,7 @@ export async function compileHourlyMetrics() {
         m.latCount += g._count._all
       }
 
-    } else if (g.status >= 400) {
+    } else if (g.status >= 400 || g.status === 0) {
       m.downRegions.add(g.regionId)
     }
   }

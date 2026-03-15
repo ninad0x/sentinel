@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label"
 import { useDebounce } from "@/hooks/useDebounce"
 import { cn } from "@/lib/utils"
 import { validateWebsite } from "@/lib/validateWebsiteAction"
+import { useQueryClient } from "@tanstack/react-query"
 import { Loader2, PlusIcon } from "lucide-react"
 import { useEffect, useState } from "react"
 
@@ -25,6 +26,7 @@ export function AddWebsite() {
   const [url, setUrl] = useState("")
   const [validation, setValidation] = useState<ValidationResult>(null)
   const [validating, setValidating] = useState(false)   // for loading
+  const queryClient = useQueryClient()
 
   const debouncedUrl = useDebounce(url, 700)
 
@@ -56,6 +58,7 @@ export function AddWebsite() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name, url }),
     })
+    queryClient.invalidateQueries({ queryKey: ["website"] })
     setOpen(false)
     reset()
   }
