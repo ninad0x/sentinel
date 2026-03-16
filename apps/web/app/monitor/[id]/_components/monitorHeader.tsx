@@ -7,7 +7,8 @@ import { useRouter } from 'next/navigation'
 import { useQueryClient } from '@tanstack/react-query'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { PopoverClose } from "@radix-ui/react-popover"
-import { Delete, Trash, Trash2 } from 'lucide-react'
+import { ArrowUpRight, ChevronLeft, Trash2 } from 'lucide-react'
+import Link from 'next/link'
 
 export default function MonitorHeader({ data }: MonitorProps) {
   const router = useRouter()
@@ -24,9 +25,19 @@ export default function MonitorHeader({ data }: MonitorProps) {
     <motion.nav
       className="mt-5 flex items-center justify-between px-8 py-5 border-b border-gray-200">
       
-      <div className="flex flex-col gap-0.5">
-        <p className="font-semibold text-lg text-gray-900 tracking-tight">{data.website.name}</p>
-        <p className="text-sm text-gray-400 font-mono">{data.website.url}</p>
+      <div className="flex items-center gap-4">
+        <button onClick={() => router.back()} className="text-gray-400 hover:text-gray-600 active:scale-95 transition-transform duration-75">
+          <ChevronLeft className="size-5" />
+        </button>
+
+        <div className='flex flex-col gap-1'>
+          <p className="font-semibold text-lg text-gray-900 tracking-tight">{data.website.name}</p>
+          <Link href={data.website.url} target='_' className="group flex items-center gap-1 w-fit text-sm text-gray-400 font-mono hover:text-gray-500 duration-75">
+            {data.website.url}
+          
+          <ArrowUpRight className="size-3.5 opacity-0 -translate-x-1.5 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200" />
+          </Link>
+        </div>
       </div>
 
       <div className='flex flex-col items-end'>
@@ -36,9 +47,8 @@ export default function MonitorHeader({ data }: MonitorProps) {
 
           <Popover>
             <PopoverTrigger asChild>
-              {/* <Button className='rounded-2xl border-red-200 bg-red-100 text-red-500 hover:bg-red-100 cursor-pointer hover:text-red-500' variant="outline">Delete</Button> */}
-              <Button variant="ghost" size="icon" className="border rounded-xl cursor-pointer text-gray-400 hover:text-red-400 hover:bg-transparent">
-                <Trash2 className="w-4 h-4" />
+              <Button variant="ghost" size="icon" className="border rounded-xl cursor-pointer text-gray-400 hover:text-red-400 hover:bg-transparent active:scale-95 shadow-xs transition-transform duration-75">
+                <Trash2 className="size-4" />
               </Button>
             </PopoverTrigger>
 
