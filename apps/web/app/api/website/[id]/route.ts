@@ -20,10 +20,7 @@ export async function DELETE(req: Request,
   if (website?.userId !== session.user.id) {
     return Response.json({ error: "Unauthorized" }, { status: 401 })
   }
-
-  // if (id === process.env.DEMO_WEBSITE_ID) {
-  //   return Response.json({ error: "Cannot delete demo site" }, { status: 403 })
-  // }
+  await prisma.website.delete({ where: { id } })
 
   return Response.json({ success: true })
 }

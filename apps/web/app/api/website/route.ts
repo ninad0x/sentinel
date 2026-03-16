@@ -12,16 +12,17 @@ export async function POST(req: Request) {
         return Response.json(null, { status: 401 })
     }
 
-    const body = await req.json()
+    const { name, url } = await req.json()
+    const newUrl = url.startsWith("http") ? url : `https://${url}`
 
-    const website = await prisma.website.create({
+    await prisma.website.create({
         data: {
-            name: body.name,
-            url: body.url,
+            name,
+            url: newUrl,
             userId: session.user.id,
             currentStatus: 0
         }
     })
 
-    return Response.json(website)
+    return Response.json({ success: true })
 }
