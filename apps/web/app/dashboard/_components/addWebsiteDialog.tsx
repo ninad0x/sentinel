@@ -68,7 +68,7 @@ export function AddWebsite() {
       setOpen(o)
       if (!o) reset() }}>
       <DialogTrigger asChild>
-        <Button className="rounded-lg cursor-pointer"><PlusIcon /> Add website</Button>
+        <Button className="rounded-xl cursor-pointer active:scale-95"><PlusIcon /> Add website</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-sm rounded-lg space-y-2">
         <DialogHeader>
@@ -100,7 +100,7 @@ export function AddWebsite() {
         </FieldGroup>
         <DialogFooter>
           <DialogClose asChild><Button variant="outline">Cancel</Button></DialogClose>
-          <Button disabled={!name.trim() || isChecking || !validation?.reachable} onClick={handleSubmit}>
+          <Button className="active:scale-95" disabled={!name.trim() || isChecking || !validation?.reachable} onClick={handleSubmit}>
             {!name.trim() ? "Enter a name" : !url.trim() ? "Enter a URL" : isChecking ? "Checking..." : !validation?.reachable ? "Invalid URL" : "Save"}
           </Button>
         </DialogFooter>
