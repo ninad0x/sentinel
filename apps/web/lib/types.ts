@@ -27,30 +27,86 @@ export const WebsiteTickBatch = z.object({
 })
 
 
+// export type MonitorData = {
+//   website: Prisma.WebsiteGetPayload<{
+//     select: {
+//       id: true
+//       name: true
+//       url: true
+//       currentStatus: true
+//       lastChecked: true
+//     }
+//   }>
+
+//   metrics: Prisma.WebsiteMetricGetPayload<{
+//     select: {
+//       windowStart: true,
+//       uptimePercent: true,
+//       regionsDownList: true,
+//       avgResponseTimeMs: true,
+//       regionsDownCount: true
+//     }
+//   }>[]
+
+//   incidents: Prisma.IncidentGetPayload<{}>[]
+
+
+//   regionTicks: Prisma.WebsiteTickGetPayload<{
+//     select: {
+//       status: true
+//       createdAt: true
+//       responseTimeMs: true
+//       region: { select: { name: true } }
+//     }
+//   }>[]
+
+//   regionSummary: {
+//     name: string;
+//     avgLatency: number;
+//     totalChecks: number;
+//   }[]
+
+//   uptime: {
+//     h24: number
+//     d7: number
+//     d30: number
+//   }
+
+//   latency: {
+//     h24: number
+//     d7: number
+//     d30: number
+//   }
+
+// }
+
 export type MonitorData = {
   website: Prisma.WebsiteGetPayload<{
-    select: {
-      id: true
-      name: true
-      url: true
-      currentStatus: true
-      lastChecked: true
-    }
+    select: { id: true; name: true; url: true; currentStatus: true; lastChecked: true }
   }>
-
+ 
+  // last 24h hourly metrics → 24h trend graph
   metrics: Prisma.WebsiteMetricGetPayload<{
     select: {
-      windowStart: true,
-      uptimePercent: true,
-      regionsDownList: true,
-      avgResponseTimeMs: true,
+      windowStart: true
+      uptimePercent: true
+      avgResponseTimeMs: true
+      regionsDownList: true
       regionsDownCount: true
     }
   }>[]
-
+ 
+  // last 30 days hourly metrics → green bar + uptime/latency calculations
+  monthlyMetrics: Prisma.WebsiteMetricGetPayload<{
+    select: {
+      windowStart: true
+      uptimePercent: true
+      avgResponseTimeMs: true
+    }
+  }>[]
+ 
   incidents: Prisma.IncidentGetPayload<{}>[]
-
-
+ 
   regionTicks: Prisma.WebsiteTickGetPayload<{
     select: {
       status: true
@@ -59,25 +115,15 @@ export type MonitorData = {
       region: { select: { name: true } }
     }
   }>[]
-
+ 
   regionSummary: {
-    name: string;
-    avgLatency: number;
-    totalChecks: number;
+    name: string
+    avgLatency: number
+    totalChecks: number
   }[]
-
-  uptime: {
-    h24: number
-    d7: number
-    d30: number
-  }
-
-  latency: {
-    h24: number
-    d7: number
-    d30: number
-  }
-
+ 
+  uptime: { h24: number; d7: number; d30: number }
+  latency: { h24: number; d7: number; d30: number }
 }
 
 export type CardData = {
