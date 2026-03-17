@@ -15,7 +15,7 @@ export default function LatencyTrend({ data }: MonitorProps) {
   return (
     <div>
       <p className="text-xs font-medium text-gray-400 uppercase tracking-widest px-8 py-4 border-b border-gray-200">
-        30 day Response Time
+        24h Response Time
       </p>
       <div className="px-8 py-6 h-72 border-b border-gray-200">
         <ResponsiveContainer width="100%" height="100%">
