@@ -3,51 +3,78 @@
 import { MonitorProps } from "@/lib/types"
 import React, { useState } from "react"
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { AnimatePresence, motion } from "motion/react"
 
 const COLORS = ["#111827", "#6b7280", "#d1d5db"]
 
-export default function RegionalLatency({ data }: MonitorProps) {
-  
-  const regions = [...new Set(data.regionTicks.map(t => t.region?.name).filter(Boolean))] as string[]
-  
+export default function LatencyGraph({ data }: MonitorProps) {
+  const [tab, setTab] = useState<"1h" | "24h">("1h")
   const [hidden, setHidden] = useState<Set<string>>(new Set())
+
+  const regions = [...new Set(data.regionTicks.map(t => t.region?.name).filter(Boolean))] as string[]
 
   const toggle = (r: string) => setHidden(prev => {
     const next = new Set(prev)
-    if (next.has(r)) {
-      next.delete(r)
-    } else {
-      next.add(r)
-    }
+    next.has(r) ? next.delete(r) : next.add(r)
     return next
   })
 
+  // 1h — raw region ticks (last 10 per region)
+  // 24h — hourly metrics, single avg latency line
+  const is1h = tab === "1h"
+
+  const metricsChartData = data.metrics
+    .filter(m => m.avgResponseTimeMs !== null)
+    .map(m => ({
+      time: new Date(m.windowStart).getTime(),
+      latency: m.avgResponseTimeMs
+    }))
 
   if (!regions.length) return null
 
   return (
     <div className="border-b border-gray-200">
-      
-      {/* Region toggles */}
-      <div className="flex gap-2 px-8 py-6 items-center">
-        {regions.map((r, i) => (
-          <button
-            key={r}
-            onClick={() => toggle(r)}
-            className={`cursor-pointer text-xs px-3 py-1 rounded-lg border transition-all ${
-              hidden.has(r) ? "border-gray-300 text-gray-400" : "border-gray-800 bg-zinc-800 text-white"
-            }`}
-          >
-            <span className="inline-block w-1.5 h-1.5 rounded-full mr-1.5" style={{ background: COLORS[i % COLORS.length] }} />
-            {r}
-          </button>
-        ))}
+      <div className="flex items-center justify-between px-8 py-4">
+
+        {/* Region toggles — only shown on 1h */}
+        <div className="flex gap-2">
+          {is1h && regions.map((r, i) => (
+            <button
+              key={r}
+              onClick={() => toggle(r)}
+              className={`cursor-pointer text-xs px-3 py-1 rounded-lg border transition-all ${
+                hidden.has(r) ? "border-gray-300 text-gray-400" : "border-gray-800 bg-zinc-800 text-white"
+              }`}
+            >
+              <span className="inline-block w-1.5 h-1.5 rounded-full mr-1.5" style={{ background: COLORS[i % COLORS.length] }} />
+              {r}
+            </button>
+          ))}
+          {!is1h && <p className="text-xs font-medium text-gray-400 uppercase tracking-widest">Latency</p>}
+        </div>
+
+        {/* Tab toggle */}
+        <Tabs value={tab} onValueChange={v => setTab(v as "1h" | "24h")}>
+          <TabsList className="h-8">
+            <TabsTrigger value="1h" className="text-xs px-3">1h</TabsTrigger>
+            <TabsTrigger value="24h" className="text-xs px-3">24h</TabsTrigger>
+          </TabsList>
+        </Tabs>
+
       </div>
 
       {/* Chart */}
-      <div className="px-8 pb-6 h-64">
+      <AnimatePresence mode="wait">
+      <motion.div 
+        key={tab}
+        initial={{ opacity: 0, y: 6 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -6 }}
+        transition={{ duration: 0.2, ease: "easeOut" }}
+        className="px-8 pb-6 h-64">
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart>
+          <LineChart data={is1h ? undefined : metricsChartData}>
             <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
             <XAxis
               dataKey="time"
@@ -56,7 +83,10 @@ export default function RegionalLatency({ data }: MonitorProps) {
               tick={{ fontSize: 11, fill: "#9ca3af", fontFamily: "monospace" }}
               tickLine={false}
               axisLine={false}
-              tickFormatter={t => new Date(t).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+              tickFormatter={t => is1h
+                ? new Date(t).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+                : new Date(t).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+              }
             />
             <YAxis
               unit="ms"
@@ -70,7 +100,8 @@ export default function RegionalLatency({ data }: MonitorProps) {
               formatter={(value, name) => [`${value} ms`, name]}
             />
 
-            {regions.filter(r => !hidden.has(r)).map((r, i) => (
+            {/* 1h: one line per region */}
+            {is1h && regions.filter(r => !hidden.has(r)).map((r, i) => (
               <Line
                 key={r}
                 data={data.regionTicks
@@ -83,13 +114,24 @@ export default function RegionalLatency({ data }: MonitorProps) {
                 dot={false}
                 stroke={COLORS[i % COLORS.length]}
                 strokeWidth={1.5}
-                // isAnimationActive={false}
               />
             ))}
-            
+
+            {/* 24h: single avg latency line */}
+            {!is1h && (
+              <Line
+                dataKey="latency"
+                name="avg latency"
+                type="monotone"
+                dot={false}
+                stroke="#111827"
+                strokeWidth={1.5}
+              />
+            )}
           </LineChart>
         </ResponsiveContainer>
-      </div>
+      </motion.div>
+      </AnimatePresence>
     </div>
   )
 }
