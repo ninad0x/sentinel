@@ -6,9 +6,10 @@ import { ArrowRight } from "lucide-react"
 export default function IncidentTimeline({ data }: MonitorProps) {
   return (
     <div>
-      <p className="text-xs font-medium text-gray-400 uppercase tracking-widest px-8 py-4 border-b border-gray-200">
-        Incident Timeline
-      </p>
+      <p className="text-xs font-medium text-gray-400 uppercase tracking-widest px-8 py-4 border-b border-gray-200"
+      style={{ background: "repeating-linear-gradient(45deg, transparent, transparent 4px, #f3f4f6 4px, #f3f4f6 5px)" }}>
+      Incident timeline
+    </p>
 
       {!data.incidents.length ? (
         <p className="text-xs font-mono text-gray-400 px-8 py-6">No incidents recorded.</p>

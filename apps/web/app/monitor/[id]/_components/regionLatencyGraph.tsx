@@ -35,9 +35,9 @@ export default function LatencyGraph({ data }: MonitorProps) {
 
   return (
     <div className="border-b border-gray-200">
-      <p className="text-xs font-medium text-gray-400 uppercase tracking-widest px-8 py-4 border-b border-gray-200">
+      {/* <p className="text-xs font-medium text-gray-400 uppercase tracking-widest px-8 py-4 border-b border-gray-200">
         Regional Latency
-      </p>
+      </p> */}
       <div className="flex items-center justify-between px-8 py-4">
 
         {/* Region toggles — only shown on 1h */}
@@ -49,10 +49,10 @@ export default function LatencyGraph({ data }: MonitorProps) {
               transition= {{ duration: 0.25, delay: 0.2, ease: "easeOut" }}
               key={r}
               onClick={() => toggle(r)}
-              className={`active:scale-95 text-xs px-3 py-1.5 rounded-lg transition-all ${
-                hidden.has(r) 
-                  ? "ring ring-gray-200 text-gray-400 bg-transparent" 
-                  : "border-gray-200 bg-background text-gray-900 shadow-sm"
+              className={`cursor-pointer text-xs px-3 py-1 rounded-lg border transition-all ${
+                hidden.has(r) ? 
+                "border-dashed border-gray-300 text-gray-400" : 
+                "border-gray-800 bg-zinc-800 text-white"
               }`}
             >
               <span className="inline-block w-1.5 h-1.5 rounded-full mr-1.5" style={{ background: COLORS[i % COLORS.length] }} />

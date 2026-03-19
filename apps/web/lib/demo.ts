@@ -19,7 +19,7 @@ const regionTicks = [
   { status: 200, createdAt: new Date(minsAgo(9)),  responseTimeMs: 415, region: { name: "ap-south-1" } },
   { status: 200,   createdAt: new Date(minsAgo(6)),  responseTimeMs: 0,   region: { name: "ap-south-1" } },
   { status: 200,   createdAt: new Date(minsAgo(3)),  responseTimeMs: 0,   region: { name: "ap-south-1" } },
-  { status: 400,   createdAt: new Date(minsAgo(0)),  responseTimeMs: 0,   region: { name: "ap-south-1" } },
+  { status: 200,   createdAt: new Date(minsAgo(0)),  responseTimeMs: 0,   region: { name: "ap-south-1" } },
 
   // eu-west-1 — went down for 3 ticks, now recovered
   { status: 200, createdAt: new Date(minsAgo(27)), responseTimeMs: 310, region: { name: "eu-west-1" } },
@@ -41,9 +41,9 @@ const regionTicks = [
   { status: 200, createdAt: new Date(minsAgo(15)), responseTimeMs: 488, region: { name: "us-east-1" } },
   { status: 200, createdAt: new Date(minsAgo(12)), responseTimeMs: 510, region: { name: "us-east-1" } },
   { status: 200, createdAt: new Date(minsAgo(9)),  responseTimeMs: 495, region: { name: "us-east-1" } },
-  { status: 400,   createdAt: new Date(minsAgo(6)),  responseTimeMs: 0,   region: { name: "us-east-1" } },
-  { status: 400,   createdAt: new Date(minsAgo(3)),  responseTimeMs: 0,   region: { name: "us-east-1" } },
-  { status: 400,   createdAt: new Date(minsAgo(0)),  responseTimeMs: 0,   region: { name: "us-east-1" } },
+  { status: 200,   createdAt: new Date(minsAgo(6)),  responseTimeMs: 0,   region: { name: "us-east-1" } },
+  { status: 200,   createdAt: new Date(minsAgo(3)),  responseTimeMs: 0,   region: { name: "us-east-1" } },
+  { status: 200,   createdAt: new Date(minsAgo(0)),  responseTimeMs: 0,   region: { name: "us-east-1" } },
 ]
 
 // ─── 24H METRICS (hourly, last 24 hours) ─────────────────────────────────────

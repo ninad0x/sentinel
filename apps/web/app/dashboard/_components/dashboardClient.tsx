@@ -70,7 +70,7 @@ export default function DashboardClient() {
               Demo site
             </Button>
 
-            <AddWebsite isactive={data?.length >= 2} />
+            <AddWebsite disable={data ? data.length >= 2 : true} />
           </div>
         </motion.nav>
 

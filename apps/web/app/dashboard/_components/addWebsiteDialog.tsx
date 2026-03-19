@@ -20,7 +20,7 @@ type ValidationResult = {
   status: number | null | undefined
 } | null
 
-export function AddWebsite({ isactive } : {isactive: boolean}) {
+export function AddWebsite({ disable } : {disable: boolean}) {
   const [open, setOpen] = useState(false)
   const [name, setName] = useState("")
   const [url, setUrl] = useState("")
@@ -68,7 +68,7 @@ export function AddWebsite({ isactive } : {isactive: boolean}) {
       setOpen(o)
       if (!o) reset() }}>
       <DialogTrigger asChild>
-        <Button disabled={isactive} className="rounded-xl cursor-pointer active:scale-95"><PlusIcon /> Add website</Button>
+        <Button disabled={disable} className="rounded-xl cursor-pointer active:scale-95"><PlusIcon /> Add website</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-sm rounded-lg space-y-2">
         <DialogHeader>
