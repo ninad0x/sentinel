@@ -24,7 +24,7 @@ export default function WebsiteCard({ site }: {site: CardData}) {
             key={site.id} 
             href={`/monitor/${site.id}`}
             onMouseEnter={prefetch}
-            className="px-8 py-6 hover:bg-gray-50 transition flex flex-col gap-5"
+            className="px-8 py-6 hover:bg-gray-50 transition flex flex-col gap-4"
             >
             <div className="flex items-center justify-between">
                 <p className="font-semibold text-lg text-gray-900 tracking-tight">{site.name}</p>

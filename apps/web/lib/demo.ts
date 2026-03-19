@@ -2,104 +2,120 @@
 
 const now = new Date("2026-03-17T15:00:00Z")
 
-const minsAgo = (m: number) => new Date(now.getTime() - m * 60 * 1000).toISOString()
-const hoursAgo = (h: number) => new Date(now.getTime() - h * 60 * 60 * 1000).toISOString()
+const minsAgo  = (m: number) => new Date(now.getTime() - m * 60 * 1000).toISOString()
+const hoursAgo = (h: number) => new Date(now.getTime() - h * 60 * 60 * 1000)
+const daysAgo  = (d: number) => new Date(now.getTime() - d * 24 * 60 * 60 * 1000)
 
-// 10 ticks per region, spaced 3 mins apart (last 30 mins)
-// ap-south-1: stable ~400ms
-// eu-west-1: stable ~300ms, goes down at tick 5-7 (resolved regional incident)
-// us-east-1: stable ~500ms, goes down at tick 8-10 (active global incident)
+// ─── REGION TICKS (last 30 mins, 10 per region) ──────────────────────────────
 
 const regionTicks = [
-  // ap-south-1 — normal throughout, spikes during global incident
-  { status: 500, createdAt: new Date(minsAgo(27)), responseTimeMs: 412, region: { name: "ap-south-1" } },
-  { status: 500, createdAt: new Date(minsAgo(24)), responseTimeMs: 398, region: { name: "ap-south-1" } },
-  { status: 400, createdAt: new Date(minsAgo(21)), responseTimeMs: 421, region: { name: "ap-south-1" } },
-  { status: 400, createdAt: new Date(minsAgo(18)), responseTimeMs: 435, region: { name: "ap-south-1" } },
-  { status: 400, createdAt: new Date(minsAgo(15)), responseTimeMs: 408, region: { name: "ap-south-1" } },
-  { status: 400, createdAt: new Date(minsAgo(12)), responseTimeMs: 390, region: { name: "ap-south-1" } },
-  { status: 400, createdAt: new Date(minsAgo(9)),  responseTimeMs: 415, region: { name: "ap-south-1" } },
-  { status: 400,   createdAt: new Date(minsAgo(6)),  responseTimeMs: 0,   region: { name: "ap-south-1" } },
-  { status: 400,   createdAt: new Date(minsAgo(3)),  responseTimeMs: 0,   region: { name: "ap-south-1" } },
+  // ap-south-1
+  { status: 200, createdAt: new Date(minsAgo(27)), responseTimeMs: 412, region: { name: "ap-south-1" } },
+  { status: 200, createdAt: new Date(minsAgo(24)), responseTimeMs: 398, region: { name: "ap-south-1" } },
+  { status: 200, createdAt: new Date(minsAgo(21)), responseTimeMs: 421, region: { name: "ap-south-1" } },
+  { status: 200, createdAt: new Date(minsAgo(18)), responseTimeMs: 435, region: { name: "ap-south-1" } },
+  { status: 200, createdAt: new Date(minsAgo(15)), responseTimeMs: 408, region: { name: "ap-south-1" } },
+  { status: 200, createdAt: new Date(minsAgo(12)), responseTimeMs: 390, region: { name: "ap-south-1" } },
+  { status: 200, createdAt: new Date(minsAgo(9)),  responseTimeMs: 415, region: { name: "ap-south-1" } },
+  { status: 200,   createdAt: new Date(minsAgo(6)),  responseTimeMs: 0,   region: { name: "ap-south-1" } },
+  { status: 200,   createdAt: new Date(minsAgo(3)),  responseTimeMs: 0,   region: { name: "ap-south-1" } },
   { status: 400,   createdAt: new Date(minsAgo(0)),  responseTimeMs: 0,   region: { name: "ap-south-1" } },
 
-  // eu-west-1 — goes down for 3 ticks then recovers (resolved regional incident)
-  { status: 500, createdAt: new Date(minsAgo(27)), responseTimeMs: 310, region: { name: "eu-west-1" } },
-  { status: 500, createdAt: new Date(minsAgo(24)), responseTimeMs: 298, region: { name: "eu-west-1" } },
-  { status: 500, createdAt: new Date(minsAgo(21)), responseTimeMs: 322, region: { name: "eu-west-1" } },
-  { status: 500, createdAt: new Date(minsAgo(18)), responseTimeMs: 305, region: { name: "eu-west-1" } },
+  // eu-west-1 — went down for 3 ticks, now recovered
+  { status: 200, createdAt: new Date(minsAgo(27)), responseTimeMs: 310, region: { name: "eu-west-1" } },
+  { status: 200, createdAt: new Date(minsAgo(24)), responseTimeMs: 298, region: { name: "eu-west-1" } },
+  { status: 200, createdAt: new Date(minsAgo(21)), responseTimeMs: 322, region: { name: "eu-west-1" } },
+  { status: 200, createdAt: new Date(minsAgo(18)), responseTimeMs: 305, region: { name: "eu-west-1" } },
   { status: 0,   createdAt: new Date(minsAgo(15)), responseTimeMs: 0,   region: { name: "eu-west-1" } },
   { status: 0,   createdAt: new Date(minsAgo(12)), responseTimeMs: 0,   region: { name: "eu-west-1" } },
   { status: 0,   createdAt: new Date(minsAgo(9)),  responseTimeMs: 0,   region: { name: "eu-west-1" } },
-  { status: 500, createdAt: new Date(minsAgo(6)),  responseTimeMs: 318, region: { name: "eu-west-1" } },
-  { status: 500, createdAt: new Date(minsAgo(3)),  responseTimeMs: 302, region: { name: "eu-west-1" } },
-  { status: 500, createdAt: new Date(minsAgo(0)),  responseTimeMs: 295, region: { name: "eu-west-1" } },
+  { status: 200, createdAt: new Date(minsAgo(6)),  responseTimeMs: 318, region: { name: "eu-west-1" } },
+  { status: 200, createdAt: new Date(minsAgo(3)),  responseTimeMs: 302, region: { name: "eu-west-1" } },
+  { status: 200, createdAt: new Date(minsAgo(0)),  responseTimeMs: 295, region: { name: "eu-west-1" } },
 
-  // us-east-1 — goes down last 3 ticks (part of active global incident))
-  { status: 400, createdAt: new Date(minsAgo(27)), responseTimeMs: 512, region: { name: "us-east-1" } },
-  { status: 400, createdAt: new Date(minsAgo(24)), responseTimeMs: 498, region: { name: "us-east-1" } },
-  { status: 400, createdAt: new Date(minsAgo(21)), responseTimeMs: 521, region: { name: "us-east-1" } },
-  { status: 400, createdAt: new Date(minsAgo(18)), responseTimeMs: 505, region: { name: "us-east-1" } },
-  { status: 400, createdAt: new Date(minsAgo(15)), responseTimeMs: 488, region: { name: "us-east-1" } },
-  { status: 500, createdAt: new Date(minsAgo(12)), responseTimeMs: 510, region: { name: "us-east-1" } },
-  { status: 500, createdAt: new Date(minsAgo(9)),  responseTimeMs: 495, region: { name: "us-east-1" } },
+  // us-east-1 — down last 3 ticks (global incident)
+  { status: 200, createdAt: new Date(minsAgo(27)), responseTimeMs: 512, region: { name: "us-east-1" } },
+  { status: 200, createdAt: new Date(minsAgo(24)), responseTimeMs: 498, region: { name: "us-east-1" } },
+  { status: 200, createdAt: new Date(minsAgo(21)), responseTimeMs: 521, region: { name: "us-east-1" } },
+  { status: 200, createdAt: new Date(minsAgo(18)), responseTimeMs: 505, region: { name: "us-east-1" } },
+  { status: 200, createdAt: new Date(minsAgo(15)), responseTimeMs: 488, region: { name: "us-east-1" } },
+  { status: 200, createdAt: new Date(minsAgo(12)), responseTimeMs: 510, region: { name: "us-east-1" } },
+  { status: 200, createdAt: new Date(minsAgo(9)),  responseTimeMs: 495, region: { name: "us-east-1" } },
   { status: 400,   createdAt: new Date(minsAgo(6)),  responseTimeMs: 0,   region: { name: "us-east-1" } },
   { status: 400,   createdAt: new Date(minsAgo(3)),  responseTimeMs: 0,   region: { name: "us-east-1" } },
   { status: 400,   createdAt: new Date(minsAgo(0)),  responseTimeMs: 0,   region: { name: "us-east-1" } },
 ]
 
-// 24 hourly metrics (last 24 hours), mostly healthy with a dip during the regional incident
+// ─── 24H METRICS (hourly, last 24 hours) ─────────────────────────────────────
+
 const metrics = Array.from({ length: 24 }, (_, i) => {
-  const windowStart = new Date(now.getTime() - (24 - i) * 60 * 60 * 1000).toISOString()
-  const windowEnd   = new Date(now.getTime() - (23 - i) * 60 * 60 * 1000).toISOString()
+  const windowStart = hoursAgo(24 - i)
+  const windowEnd   = hoursAgo(23 - i)
 
-  // hour 10 = regional incident (eu-west-1 down)
-  // hour 22-23 = global incident (ap-south-1 + us-east-1 down, ongoing)
-  const isRegionalIncidentHour = i === 10
-  const isGlobalIncidentHour   = i >= 22
+  const isRegionalHour = i === 10
+  const isGlobalHour   = i >= 22
 
-  const uptimePercent     = isGlobalIncidentHour ? 33 : isRegionalIncidentHour ? 66 : 99.5 + Math.random() * 0.5
-  const avgResponseTimeMs = isGlobalIncidentHour ? null : Math.round(420 + Math.random() * 80)
-  const regionsDownList   = isGlobalIncidentHour
-    ? ["ap-south-1", "eu-west-1", "us-east-1"]
-    : isRegionalIncidentHour
-    ? ["eu-west-1"]
-    : []
+  const uptimePercent     = isGlobalHour ? 33 : isRegionalHour ? 66 : 99.5 + Math.random() * 0.5
+  const avgResponseTimeMs = isGlobalHour ? null : Math.round(420 + Math.random() * 80)
+  const regionsDownList   = isGlobalHour ? ["ap-south-1", "us-east-1"] : isRegionalHour ? ["eu-west-1"] : []
 
   return {
-    windowStart: new Date(windowStart),
-    windowEnd: new Date(windowEnd),
-    uptimePercent:     Math.round(uptimePercent * 100) / 100,
+    windowStart,
+    windowEnd,
+    uptimePercent:    Math.round(uptimePercent * 100) / 100,
     avgResponseTimeMs,
     regionsDownList,
-    regionsDownCount:  regionsDownList.length,
+    regionsDownCount: regionsDownList.length,
   }
 })
+
+// ─── MONTHLY METRICS (hourly rows for last 30 days, ~720 rows) ───────────────
+// Simulate realistic uptime with a few bad days scattered across the month
+
+const BAD_DAYS = new Set([1]) // days ago that had incidents
+
+const monthlyMetrics = Array.from({ length: 30 * 24 }, (_, i) => {
+  const windowStart = new Date(now.getTime() - (30 * 24 - i) * 60 * 60 * 1000)
+  const dayIndex    = Math.floor((30 * 24 - i) / 24) // which day ago this hour belongs to
+
+  const isBadDay    = BAD_DAYS.has(dayIndex)
+  const isBadHour   = isBadDay && (i % 24 >= 10 && i % 24 <= 13) // bad for ~4 hours on bad days
+
+  const uptimePercent     = isBadHour ? 30 + Math.random() * 20 : 98 + Math.random() * 2
+  const avgResponseTimeMs = isBadHour ? null : Math.round(400 + Math.random() * 150)
+
+  return {
+    windowStart,
+    uptimePercent:    Math.round(uptimePercent * 100) / 100,
+    avgResponseTimeMs,
+  }
+})
+
+// ─── EXPORT ──────────────────────────────────────────────────────────────────
 
 export const demoData = {
   website: {
     id: "demo",
     name: "Demo Website",
     url: "https://demo.example.com",
-    currentStatus: 500,
+    currentStatus: 200,
     lastChecked: new Date(minsAgo(0)),
   },
 
   metrics,
+  monthlyMetrics,
 
   incidents: [
-    // Active global incident — ongoing
     {
       id: "inc_global",
       websiteId: "demo",
-      type: "Global",
+      type: "Regional",
       status: "Ongoing",
-      cause: "ap-south-1, eu-west-1, us-east-1",
+      cause: "us-east-1",
       startedAt: new Date(minsAgo(6)),
       endedAt: null,
       createdAt: new Date(minsAgo(6)),
     },
-    // Resolved regional incident — 15 mins ago, lasted 9 mins
     {
       id: "inc_regional",
       websiteId: "demo",
@@ -109,6 +125,16 @@ export const demoData = {
       startedAt: new Date(minsAgo(15)),
       endedAt: new Date(minsAgo(6)),
       createdAt: new Date(minsAgo(15)),
+    },
+    {
+      id: "inc_old_1",
+      websiteId: "demo",
+      type: "Global",
+      status: "Resolved",
+      cause: "ap-south-1, eu-west-1, us-east-1",
+      startedAt: daysAgo(8),
+      endedAt: new Date(daysAgo(8).getTime() + 2 * 60 * 60 * 1000),
+      createdAt: daysAgo(8),
     },
   ],
 
@@ -120,15 +146,6 @@ export const demoData = {
     { name: "us-east-1",  avgLatency: 505, totalChecks: 480 },
   ],
 
-  uptime: {
-    h24: 72.4,
-    d7:  98.1,
-    d30: 99.3,
-  },
-
-  latency: {
-    h24: 455,
-    d7:  480,
-    d30: 495,
-  },
+  uptime: { h24: 72.4, d7: 98.1, d30: 96.3 },
+  latency: { h24: 455, d7: 480, d30: 495 },
 }

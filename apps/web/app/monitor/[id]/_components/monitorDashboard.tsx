@@ -1,9 +1,7 @@
 'use client'
 import { useQuery } from '@tanstack/react-query'
 import MonitorHeader from "./monitorHeader"
-import RegionCards from "./regionCards"
 import RegionalLatency from './regionLatencyGraph'
-import LatencyTrend from './latencyTrend'
 import UptimeOverview from './uptimeOverview'
 import IncidentTimeline from './incidentList'
 import { motion } from 'motion/react'
@@ -31,12 +29,17 @@ export default function MonitorDashboard({ id }: { id: string }) {
   return (
     <div className="bg-gray-50/50">
         <motion.div
-            key={data}  // trigger when data loads
-            className="flex flex-col mx-auto h-full max-w-5xl bg-gray-50 border"
+            key={data}  // trigger
+            className="flex flex-col mx-auto min-h-screen max-w-5xl bg-gray-50 border"
             initial="hidden"
             animate="visible"
             >
-            {[MonitorHeader, RegionCards, RegionalLatency, LatencyTrend , UptimeOverview, IncidentTimeline]
+            {[
+                MonitorHeader, 
+                UptimeOverview,
+                // RegionCards, 
+                RegionalLatency,
+                IncidentTimeline]
                 .map((Component, i) => (
                 <motion.div
                     key={i}

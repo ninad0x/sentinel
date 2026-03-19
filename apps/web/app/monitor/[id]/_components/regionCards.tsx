@@ -6,7 +6,7 @@ import StatusBadge from '@/components/ui/statusBadge'
 export default function RegionCards({ data }: MonitorProps) {
   return (
     <div>
-      <p className="text-xs font-medium text-gray-400 uppercase tracking-widest px-8 py-4 border-b border-gray-200">
+      <p className="text-xs font-medium text-gray-400 uppercase tracking-widest px-8 py-2 border-b border-gray-200">
         Regional Latency
       </p>
       <div className="grid grid-cols-1 md:grid-cols-3 divide-x divide-gray-200 border-b border-gray-200">
