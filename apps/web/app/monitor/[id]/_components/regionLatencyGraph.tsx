@@ -6,7 +6,7 @@ import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianG
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { AnimatePresence, motion } from "motion/react"
 
-const COLORS = ["#111827", "#6b7280", "#d1d5db"]
+const COLORS = ["#111827", "#6b7280", "#ADADAD"]
 
 export default function LatencyGraph({ data }: MonitorProps) {
   const [tab, setTab] = useState<"1h" | "24h">("1h")
@@ -35,10 +35,7 @@ export default function LatencyGraph({ data }: MonitorProps) {
 
   return (
     <div className="border-b border-gray-200">
-      {/* <p className="text-xs font-medium text-gray-400 uppercase tracking-widest px-8 py-4 border-b border-gray-200">
-        Regional Latency
-      </p> */}
-      <div className="flex items-center justify-between px-8 py-4">
+      <div className="flex items-center justify-between px-8 py-5">
 
         {/* Region toggles — only shown on 1h */}
         <div className="flex gap-2">
@@ -49,10 +46,10 @@ export default function LatencyGraph({ data }: MonitorProps) {
               transition= {{ duration: 0.25, delay: 0.2, ease: "easeOut" }}
               key={r}
               onClick={() => toggle(r)}
-              className={`cursor-pointer text-xs px-3 py-1 rounded-lg border transition-all ${
+              className={`cursor-pointer active:scale-97 text-xs px-3 py-1 rounded-lg border transition-all ${
                 hidden.has(r) ? 
                 "border-dashed border-gray-300 text-gray-400" : 
-                "border-gray-800 bg-zinc-800 text-white"
+                "border-gray-800 bg-neutral-800 text-white"
               }`}
             >
               <span className="inline-block w-1.5 h-1.5 rounded-full mr-1.5" style={{ background: COLORS[i % COLORS.length] }} />
