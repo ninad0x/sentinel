@@ -17,13 +17,13 @@ export default function MonitorHeader({ data }: MonitorProps) {
   const handleDelete = async (id: string) => {
   await fetch(`/api/website/${id}`,
     { method: "DELETE" })
-    queryClient.invalidateQueries({ queryKey: ["website"]})
     router.push("/dashboard")
+    queryClient.invalidateQueries({ queryKey: ["website"]})
   }
 
   return (
     <motion.nav
-      className="mt-5 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between px-4 sm:px-8 py-5 border-b border-gray-200">
+      className="mt-5 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between px-4 sm:px-8 py-5 border-gray-200 mb-5">
       
       <div className="flex items-center gap-4">
         <button onClick={() => router.back()} className="text-gray-400 hover:text-gray-600 active:scale-95 transition-transform duration-75">

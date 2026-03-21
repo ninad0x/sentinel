@@ -26,12 +26,12 @@ export default function RegionCards({ data }: MonitorProps) {
               
             </div>
 
-            <p className="text-3xl font-semibold text-gray-900 tracking-tight">
+            <p className="text-4xl font-semibold text-gray-900 tracking-tight">
               {region.avgLatency}
               <span className="text-base font-normal text-gray-400 ml-1">ms</span>
             </p>
 
-            <p className="text-xs text-gray-400">{region.totalChecks} checks</p>
+            <p className="text-xs text-muted-foreground">{region.totalChecks} checks</p>
 
           </div>
         )}

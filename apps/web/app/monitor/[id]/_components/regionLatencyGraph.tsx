@@ -34,8 +34,8 @@ export default function LatencyGraph({ data }: MonitorProps) {
   if (!regions.length) return null
 
   return (
-    <div className="border-b border-gray-200">
-      <div className="flex items-center justify-between px-8 py-5">
+    <div className="border-gray-200 mb-5">
+      <div className="flex items-center justify-between px-8 py-6">
 
         {/* Region toggles — only shown on 1h */}
         <div className="flex gap-2">
@@ -48,8 +48,8 @@ export default function LatencyGraph({ data }: MonitorProps) {
               onClick={() => toggle(r)}
               className={`cursor-pointer active:scale-97 text-xs px-3 py-1 rounded-lg border transition-all ${
                 hidden.has(r) ? 
-                "border-dashed border-gray-300 text-gray-400" : 
-                "border-gray-800 bg-neutral-800 text-white"
+                "border-dashed border-gray-200 text-gray-400" : 
+                "border-gray-300 bg-gray-100 text-gray-700"
               }`}
             >
               <span className="inline-block w-1.5 h-1.5 rounded-full mr-1.5" style={{ background: COLORS[i % COLORS.length] }} />

@@ -10,12 +10,12 @@ export default function HeroNav() {
         </Link>
 
         <div className="flex items-center gap-8">
-          <Link href="#features" className="text-sm font-mono text-gray-600 hover:text-gray-900 transition">
+          <Link href="#features" className="text-sm font-mono text-gray-600 hover:text-gray-900 hover:underline underline-offset-3 transition-all">
             Features
           </Link>
 
-          <Link href="/dashboard" className="text-sm font-mono text-gray-600 hover:text-gray-900 transition">
-            Dashboard
+          <Link href="/monitor/demo" className="text-sm font-mono text-gray-600 hover:text-gray-900 hover:underline underline-offset-3 transition-all">
+            Demo site
           </Link>
 
           <Link

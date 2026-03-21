@@ -3,7 +3,7 @@ import WorldMap from "@/components/worldmap"
 
 export function Hero() {
   return (
-    <section className="relative max-w-6xl mx-auto flex items-center justify-center border-b border-gray-200">
+    <section className="relative max-w-6xl mx-auto flex items-center justify-center">
 
 
         {/* World map background */}
@@ -38,10 +38,10 @@ export function Hero() {
               </Link>
 
               <Link
-                href="/dashboard"
+                href="/monitor/demo"
                 className="px-8 py-4 bg-white border border-gray-200 text-gray-900 text-sm font-medium rounded-lg hover:bg-gray-50 transition"
               >
-                View Dashboard
+                Demo site
               </Link>
             </div>
 

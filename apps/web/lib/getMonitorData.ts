@@ -7,7 +7,7 @@ const avg = (arr: number[]) => arr.length ? arr.reduce((a, b) => a + b, 0) / arr
 export const getMonitorData = async (websiteId: string): Promise<MonitorData | null> => {
   console.log("monitor data called");
 
-  if (websiteId === "demo") return demoData as unknown as MonitorData
+  if (websiteId === "demo") return demoData as MonitorData
 
   const website = await prisma.website.findUnique({
     where: { id: websiteId },
