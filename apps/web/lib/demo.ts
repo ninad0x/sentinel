@@ -1,6 +1,7 @@
 // lib/demoData.ts
 
-const now = new Date("2026-03-17T15:00:00Z")
+// const now = new Date("2026-03-17T15:00:00Z")
+const now = new Date()
 
 const minsAgo  = (m: number) => new Date(now.getTime() - m * 60 * 1000).toISOString()
 const hoursAgo = (h: number) => new Date(now.getTime() - h * 60 * 60 * 1000)
@@ -72,22 +73,27 @@ const metrics = Array.from({ length: 24 }, (_, i) => {
 // ─── MONTHLY METRICS (hourly rows for last 30 days, ~720 rows) ───────────────
 // Simulate realistic uptime with a few bad days scattered across the month
 
-const BAD_DAYS = new Set([1]) // days ago that had incidents
-
 const monthlyMetrics = Array.from({ length: 30 * 24 }, (_, i) => {
   const windowStart = new Date(now.getTime() - (30 * 24 - i) * 60 * 60 * 1000)
-  const dayIndex    = Math.floor((30 * 24 - i) / 24) // which day ago this hour belongs to
 
-  const isBadDay    = BAD_DAYS.has(dayIndex)
-  const isBadHour   = isBadDay && (i % 24 >= 10 && i % 24 <= 13) // bad for ~4 hours on bad days
+  const dayIndex = Math.floor(i / 24) // ✅ FIXED (important)
 
-  const uptimePercent     = isBadHour ? 30 + Math.random() * 20 : 98 + Math.random() * 2
-  const avgResponseTimeMs = isBadHour ? null : Math.round(400 + Math.random() * 150)
+  let uptimePercent
+
+  // EXACT control of full days
+  if (dayIndex === 3) {
+    uptimePercent = 55 
+  } else if ([5, 15].includes(dayIndex)) {
+    uptimePercent = 80
+  } else {
+    uptimePercent = 97 + Math.random() * 2
+  }
 
   return {
     windowStart,
-    uptimePercent:    Math.round(uptimePercent * 100) / 100,
-    avgResponseTimeMs,
+    uptimePercent: Math.round(uptimePercent * 100) / 100,
+    avgResponseTimeMs:
+      uptimePercent < 70 ? null : Math.round(400 + Math.random() * 100),
   }
 })
 
@@ -105,38 +111,40 @@ export const demoData = {
   metrics,
   monthlyMetrics,
 
-  incidents: [
-    {
-      id: "inc_global",
-      websiteId: "demo",
-      type: "Regional",
-      status: "Resolved",
-      cause: "us-east-1",
-      startedAt: new Date(minsAgo(26)),
-      endedAt: new Date(minsAgo(6)),
-      createdAt: new Date(minsAgo(26)),
-    },
-    {
-      id: "inc_regional",
-      websiteId: "demo",
-      type: "Regional",
-      status: "Resolved",
-      cause: "eu-west-1",
-      startedAt: new Date(minsAgo(45)),
-      endedAt: new Date(minsAgo(6)),
-      createdAt: new Date(minsAgo(45)),
-    },
-    {
-      id: "inc_old_1",
-      websiteId: "demo",
-      type: "Global",
-      status: "Resolved",
-      cause: "ap-south-1, eu-west-1, us-east-1",
-      startedAt: daysAgo(8),
-      endedAt: new Date(daysAgo(8).getTime() + 2 * 60 * 60 * 1000),
-      createdAt: daysAgo(8),
-    },
-  ],
+incidents: [
+  {
+    id: "inc_red",
+    websiteId: "demo",
+    type: "Global",
+    status: "Resolved",
+    cause: "us-east-1",
+    startedAt: daysAgo(29 - 3), // ✅ match
+    endedAt: new Date(daysAgo(29 - 3).getTime() + 3 * 60 * 60 * 1000),
+    createdAt: daysAgo(29 - 3),
+  },
+
+  {
+    id: "inc_y1",
+    websiteId: "demo",
+    type: "Regional",
+    status: "Resolved",
+    cause: "eu-west-1",
+    startedAt: daysAgo(29 - 7),
+    endedAt: new Date(daysAgo(29 - 7).getTime() + 2 * 60 * 60 * 1000),
+    createdAt: daysAgo(29 - 7),
+  },
+
+  {
+    id: "inc_y2",
+    websiteId: "demo",
+    type: "Regional",
+    status: "Resolved",
+    cause: "ap-south-1",
+    startedAt: daysAgo(29 - 12),
+    endedAt: new Date(daysAgo(29 - 12).getTime() + 2 * 60 * 60 * 1000),
+    createdAt: daysAgo(29 - 12),
+  },
+],
 
   regionTicks,
 
@@ -146,6 +154,6 @@ export const demoData = {
     { name: "us-east-1",  avgLatency: 505, totalChecks: 480 },
   ],
 
-  uptime: { h24: 72.4, d7: 98.1, d30: 96.3 },
+  uptime: { h24: 99.9, d7: 99.9, d30: 97.2 },
   latency: { h24: 455, d7: 480, d30: 495 },
 }

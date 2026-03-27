@@ -35,7 +35,7 @@ export default function LatencyGraph({ data }: MonitorProps) {
 
   return (
     <div className="border-gray-200 mb-5">
-      <div className="flex items-center justify-between px-8 py-6">
+      <div className="flex items-center justify-between px-8 py-6 ">
 
         {/* Region toggles — only shown on 1h */}
         <div className="flex gap-2">

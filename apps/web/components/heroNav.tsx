@@ -2,8 +2,8 @@ import Link from "next/link"
 
 export default function HeroNav() {
   return (
-    <nav className="fixed inset-x-0 top-0 z-50 bg-white/70 backdrop-blur-md border-gray-100">
-      <div className="max-w-6xl mx-auto px-8 h-16 flex items-center justify-between">
+    <nav id="nav" className="fixed inset-x-0 top-0 z-50 bg-white/70 backdrop-blur-md border-gray-100">
+      <div className="max-w-5xl px-5 lg:max-w-6xl lg:px-0 mx-auto h-16 flex items-center justify-between">
         
         <Link href="/" className="text-xl font-bold text-gray-900 tracking-tight">
           Sentinel

@@ -1,36 +1,40 @@
-import { cn } from "@/lib/utils"
-import { ReactNode } from "react"
+"use client";
 
-const Card = ({ children, className }: { children: ReactNode; className?: string }) => (
-  <div className={cn("bg-white p-8 flex flex-col", className)}>
-    {children}
-  </div>
-)
- 
-const FeatureTitle = ({ children }: { children: ReactNode }) => (
-  <p className="text-lg font-semibold text-zinc-900 pb-1">{children}</p>
-)
- 
-const FeatureDesc = ({ children }: { children: ReactNode }) => (
-  <p className="text-sm text-zinc-500 leading-relaxed">{children}</p>
-)
+import Bars from "./bars";
+import { RegionFlags } from "./globalCheck";
+import IncidentCarousel from "./incidentStack";
+import PhoneEmailPopup from "./phoneEmailPopup";
 
 export function Features() {
   return (
-    <div className="mb-25 max-w-5xl mx-auto rounded-2xl border overflow-hidden shadow-md grid grid-cols-7 gap-px bg-zinc-200">
-      <Card className="col-span-4">
-        <FeatureTitle>Multi-region monitoring</FeatureTitle>
-        <FeatureDesc>3 Global checkpoints. Every 3 minutes</FeatureDesc>
+    <div className="mt-15 max-w-6xl mx-auto  flex flex-col gap-2">
+      <h1 className="text-xl my-5 font-bold text-gray-900 tracking-tight">Features</h1>
 
+      <div
+        id="features"
+        className="
+        max-w-5xl lg:max-w-6xl mx-auto rounded-2xl overflow-hidden 
+        grid grid-cols-1 md:grid-cols-7
+         divide-neutral-200
+        bg-white border border-neutral-200
+      "
+      >
+        <div className="md:col-span-4">
+          <Bars />
+        </div>
 
-      </Card>
+        <div className="md:col-span-3">
+          <IncidentCarousel />
+        </div>
 
+        <div className="md:col-span-3">
+          <RegionFlags />
+        </div>
 
-
-      <Card className="col-span-3">hi</Card>
-      <Card className="col-span-3">hi</Card>
-      <Card className="col-span-4">hi</Card>
+        <div className="md:col-span-4">
+          <PhoneEmailPopup />
+        </div>
+      </div>
     </div>
-  )
+  );
 }
-
