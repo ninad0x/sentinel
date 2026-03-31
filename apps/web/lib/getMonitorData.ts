@@ -16,10 +16,11 @@ export const getMonitorData = async (websiteId: string): Promise<MonitorData | n
 
   if (!website) return null
 
-  const oneHourAgo = new Date(Date.now() - 1000 * 60 * 60 * 1000)
-  const oneDayAgo = new Date(Date.now() - 2400 * 60 * 60 * 1000)
-  const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
-  const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+  const now = Date.now()
+  const oneHourAgo = new Date(now - 1 * 60 * 60 * 1000)
+  const oneDayAgo = new Date(now - 24 * 60 * 60 * 1000)
+  const sevenDaysAgo = new Date(now - 7 * 24 * 60 * 60 * 1000)
+  const thirtyDaysAgo = new Date(now - 30 * 24 * 60 * 60 * 1000)
 
   const [metrics, monthlyMetrics, incidents, regionTicks] = await Promise.all([
 

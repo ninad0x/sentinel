@@ -118,7 +118,7 @@ incidents: [
     type: "Global",
     status: "Resolved",
     cause: "us-east-1",
-    startedAt: daysAgo(29 - 3), // ✅ match
+    startedAt: daysAgo(29 - 3), 
     endedAt: new Date(daysAgo(29 - 3).getTime() + 3 * 60 * 60 * 1000),
     createdAt: daysAgo(29 - 3),
   },
