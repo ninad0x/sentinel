@@ -43,15 +43,15 @@ export default function IncidentList() {
   }, []);
 
   return (
-    <Container className="relative border-b">
-      <div className="h-64 rounded-2xl border border-neutral-200 bg-white p-2 shadow-xl overflow-hidden">
+    <Container className="relative border-b border-divide">
+      <div className="h-64 rounded-2xl border border-neutral-200 bg-white p-2 shadow-xl overflow-hidden ">
         
         <div className="flex flex-col">
           {incidents.map((inc, i) => (
             <div
               key={inc.id}
               className={cn(
-                "flex items-center gap-3 px-3 h-12 rounded-xl transition-all duration-500",
+                "flex items-center gap-3 px-3 h-11 rounded-xl transition-all duration-500",
                 i === active
                   ? "opacity-100 bg-neutral-100"
                   : "opacity-40 bg-transparent"
@@ -79,7 +79,7 @@ export default function IncidentList() {
         <Description>Instantly identify global and regional outages with real-time incident tracking.</Description>
       </div>
 
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[50%] bg-linear-to-b from-white/0 to-white to-20% z-10" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[50%] bg-linear-to-b from-white/0 to-white to-20% z-10 rounded-b-2xl" />
     </Container>
   );
 }

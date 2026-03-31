@@ -9,15 +9,15 @@ export default function PhoneEmailPopup() {
       whileHover="hover"
       className="h-80 flex col-span-1 md:col-span-4 relative justify-center"
     >
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[50%] bg-linear-to-b from-white/0 to-white to-20% z-20" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[50%] bg-linear-to-b from-white/0 to-white to-20% z-20 rounded-b-2xl" />
 
       <motion.div
         variants={{
           initial: { y: 0 },
-          hover: { y: -35 },
+          hover: { y: -40 },
         }}
         transition={{ duration: 0.2 }}
-        className="phone absolute bottom-0 h-full top-5 w-[50%] border-x border-t border-neutral-200/50 rounded-t-[44px] pt-2 px-2 z-10 bg-neutral-100 shadow-premium"
+        className="phone absolute bottom-0 h-[90%] top-5 w-[50%] border-x border-t border-neutral-200/50 rounded-t-[44px] pt-2 px-2 z-10 bg-neutral-100 shadow-premium"
       >
         <div className="bg-white relative h-full w-full rounded-t-[38px] border border-neutral-100 overflow-hidden pt-4 px-4">
           {/* notification */}

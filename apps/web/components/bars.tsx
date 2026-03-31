@@ -6,9 +6,7 @@ import Container, { Description, Title } from "./container";
 
 export default function Bars() {
   return (
-    <Container className="relative border-b border-r">
-
-      {/* card */}
+    <Container className="relative border-b border-r border-divide">
       <div
         className={cn(
           "border border-neutral-200 flex flex-col rounded-t-2xl h-64",
@@ -64,7 +62,7 @@ export default function Bars() {
         <Description>Track your system health over time with a clear visual history of uptime and outages.</Description>
       </div>
 
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[50%] bg-linear-to-b from-white/0 to-white to-30% z-10" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[50%] bg-linear-to-b from-white/0 to-white to-30% z-10 rounded-b-2xl" />
 
 
     </Container>

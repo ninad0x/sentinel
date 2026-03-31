@@ -3,7 +3,7 @@ import { ReactNode } from "react";
 
 export const Title = ({ children }: { children: ReactNode }) => {
   return (
-    <h3 className="text-[16px] font-semibold tracking-tight text-neutral-800">
+    <h3 className="text-lg font-semibold tracking-tight text-neutral-800">
       {children}
     </h3>
   );
@@ -33,7 +33,7 @@ export default function Container({
   children?: ReactNode;
 }) {
   return (
-    <div className={cn("p-10 h-80 flex flex-col justify-center", className)}>
+    <div className={cn("p-14 h-80 flex flex-col justify-center", className)}>
       {children}
     </div>
   );

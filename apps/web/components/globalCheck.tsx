@@ -29,7 +29,7 @@ export function RegionFlags() {
   ];
 
   return (
-    <Container className="relative justify-between border-r">
+    <Container className="relative justify-between border-r border-divide">
       <div className="flex items-center justify-center gap-4 mb-4">
         {regions.map((r) => (
           <div key={r.code} className="relative w-36 group">
@@ -50,12 +50,11 @@ export function RegionFlags() {
                 title={r.country}
               />
 
-              {/* <span className="text-4xl">{r.flag}</span> */}
               <div className="text-center">
                 <p className="text-[13px] font-medium text-neutral-800">
                   {r.name}
                 </p>
-                <p className="text-[10px] text-neutral-400 mt-0.5">{r.code}</p>
+                <p className="text-[8px] lg:text-[10px] text-neutral-400 mt-0.5">{r.code}</p>
               </div>
             </div>
           </div>
