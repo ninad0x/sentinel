@@ -23,11 +23,11 @@ export function Header() {
             Features
           </Link>
 
-          <Link href="/monitor/demo" className="text-sm font-mono text-gray-600 hover:text-gray-900 hover:underline underline-offset-3 transition-all">
+          <Link prefetch={true} href="/monitor/demo" className="text-sm font-mono text-gray-600 hover:text-gray-900 hover:underline underline-offset-3 transition-all">
             Demo site
           </Link>
 
-          <Link
+          <Link prefetch={true} 
             href="/sign-in"
             className="px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition"
           >
