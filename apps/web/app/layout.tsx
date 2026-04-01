@@ -6,7 +6,7 @@ import Providers from "@/components/provider";
 const manrope = Manrope({})
 
 export const metadata: Metadata = {
-  title: "Sentinel Uptime Monitor",
+  title: "Sentinel Monitor",
   description: "Check your website status across the globe",
 };
 
