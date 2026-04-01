@@ -19,7 +19,7 @@ const logos = [
   ResendWordmarkBlack,
   AwsLight,
   Gmail,
-  Gmail,
+  NextjsLogoLight,
 ];
 
 export default function LogoStack() {
@@ -45,6 +45,7 @@ export default function LogoStack() {
         initial={{ opacity: 0, y: 10, filter: "blur(10px)" }}
         whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
         transition={{ delay: 0.3 }}
+        viewport={{ once: true }}
         className="flex flex-col justify-center items-center max-w-5xl lg:max-w-6xl mx-auto"
       >
         <h2 className="py-8 text-center font-mono text-sm tracking-tight text-neutral-500 uppercase w-full border-x border-divide">
@@ -58,7 +59,8 @@ export default function LogoStack() {
               variants={variants}
               initial="initial"
               whileInView="visible"
-              transition={{ delay: i * 0.1 + 0.3 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 ,delay: i * 0.08 + 0.3 }}
               className={cn(
                 "flex items-center justify-center min-h-32 p-4 py-10 border-divide",
                 "border-r border-b",

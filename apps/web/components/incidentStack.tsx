@@ -43,7 +43,7 @@ export default function IncidentList() {
   }, []);
 
   return (
-    <Container className="relative border-b border-divide">
+    <Container className="relative border-b border-l border-divide">
       <div className="h-64 rounded-2xl border border-neutral-200 bg-white p-2 shadow-xl overflow-hidden ">
         
         <div className="flex flex-col">

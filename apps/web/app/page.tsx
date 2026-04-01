@@ -9,9 +9,10 @@ export default function Home() {
     <div className="min-h-screen bg-white">
       <Header />
       <Hero />
-      <div className="mt-20"></div>
+      {/* <div className="mt-20"></div> */}
       <LogoStack />
       <Features />
+      {/* <FlowDiagram /> */}
       <Footer />
     </div>
   )

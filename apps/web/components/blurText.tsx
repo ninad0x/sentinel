@@ -45,7 +45,7 @@ export default function BlurText({
         <motion.span
           key={i}
           variants={item}
-          className="inline-block mr-[0.2em]"
+          className="inline-block mr-[0.22em] text-transparent bg-clip-text bg-linear-to-b from-zinc-900 to-zinc-600"
         >
           {word}
           {/* {i === 2 && <br />} */}

@@ -9,10 +9,10 @@ export function Hero() {
   return (
     <section className="relative h-220">
 
-      <div className="relative max-w-6xl mx-auto h-full">
+      <div className="relative max-w-7xl mx-auto h-full">
 
         <motion.div
-          className="absolute top-0 left-0 w-full pointer-events-none mt-8 mask-y-from-70%"
+          className="absolute w-full mx-auto pointer-events-none mt-8 mask-y-from-70%"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 0.3 }}
@@ -35,7 +35,7 @@ export function Hero() {
               </span>
             </div>
 
-            <BlurText className="text-6xl font-semibold text-gray-900 tracking-tight leading-tight">Monitor your websites from everywhere</BlurText>
+            <BlurText className="text-6xl font-semibold tracking-tight leading-tight ">Monitor your websites from everywhere</BlurText>
 
             <BlurText delayStagger={0.05} className="text-lg text-gray-500 max-w-2xl mx-auto">
               Track uptime, latency, and incidents across multiple regions.

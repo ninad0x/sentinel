@@ -10,11 +10,11 @@ export default function Bars() {
       <div
         className={cn(
           "border border-neutral-200 flex flex-col rounded-t-2xl h-64",
-          "flex items-center shadow-xl px-5 py-14 md:p-15",
+          "flex shadow-xl md:px-14 md:py-10",
         )}
       >
-        
-        <div className="w-full flex gap-0.5 items-end justify-center h-10 ">
+
+        <div className="w-full flex gap-0.5 items-end justify-center h-10">
           {Array.from({ length: 30 }).map((_, i) => {
             return (
               <motion.div

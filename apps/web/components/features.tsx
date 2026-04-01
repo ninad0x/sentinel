@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "@/lib/utils";
 import Bars from "./bars";
 import { RegionFlags } from "./globalCheck";
 import IncidentCarousel from "./incidentStack";
@@ -10,7 +11,7 @@ export function Features() {
   const variants = {
     initial: {
       opacity: 0,
-      y: 40,
+      y: 20,
       filter: "blur(20px)",
     },
     visible: {
@@ -22,14 +23,15 @@ export function Features() {
 
   return (
     <>
+      <div id="features" className="bg-divide h-px w-full mt-1" />
+
       <motion.div
-        id="features"
         className="border-x border-divide flex flex-col items-center max-w-6xl mx-auto"
         variants={variants}
         initial="initial"
         whileInView="visible"
-        viewport={{ margin: "-100px" }}
-        transition={{ delay: 0.5 }}
+        viewport={{ once:true, margin: "-350px" }}
+        transition={{ duration: 0.3, delay: 0.3 }}
       >
         <div className="text-center py-20 space-y-4">
           <p className="text-xs uppercase tracking-widest text-red-500">
@@ -51,9 +53,12 @@ export function Features() {
           variants={variants}
           initial="initial"
           whileInView="visible"
-          viewport={{ margin: "-100px" }}
-          transition={{ delay: 0.5 }}
-          className="max-w-5xl lg:max-w-6xl grid grid-cols-1 md:grid-cols-7 bg-white"
+          viewport={{ once:true, margin: "-100px" }}
+          transition={{ duration: 0.3, delay: 0.6 }}
+          className={cn("max-w-5xl lg:max-w-6xl grid grid-cols-1 md:grid-cols-7 gap-2",
+            "bg-[repeating-linear-gradient(45deg,transparent,transparent_4px,#f5f5f8_4px,#f5f5f8_5px)]"
+          )}
+          
         >
           <div className="md:col-span-4">
             <Bars />

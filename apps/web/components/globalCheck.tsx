@@ -29,7 +29,7 @@ export function RegionFlags() {
   ];
 
   return (
-    <Container className="relative justify-between border-r border-divide">
+    <Container className="relative justify-between border-r border-t border-divide">
       <div className="flex items-center justify-center gap-4 mb-4">
         {regions.map((r) => (
           <div key={r.code} className="relative w-36 group">
@@ -65,7 +65,7 @@ export function RegionFlags() {
 
         <Title>Multi-region monitoring</Title>
         <Description>
-          Monitor your application across multiple locations to detect region-specific issues faster.
+          Monitor across multiple locations to detect region-specific issues faster.
         </Description>
       </div>
 
