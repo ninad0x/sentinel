@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export function Footer() {
   return (
-    <div className="border-t mt-50 border-gray-200 bg-gray-50">
+    <div className="border-t mt-20 border-gray-200 bg-gray-50">
       <div className="max-w-6xl mx-auto px-8 py-8">
         <div className="flex items-center justify-between">
           <p className="text-xs font-mono text-gray-400">Built by Ninad</p>
