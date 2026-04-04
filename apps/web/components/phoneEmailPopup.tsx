@@ -60,7 +60,7 @@ export default function PhoneEmailPopup() {
           </motion.div>
 
           <div className="w-14 h-3 bg-neutral-200 rounded-full mx-auto mb-7" />
-          <div className="grid grid-cols-4 gap-4">
+          <div className="grid grid-cols-4 gap-2.5 lg:gap-4">
             <div className="aspect-square rounded-xl bg-neutral-100" />
             <div className="aspect-square rounded-xl bg-neutral-100" />
             <div className="aspect-square rounded-xl bg-neutral-100" />
