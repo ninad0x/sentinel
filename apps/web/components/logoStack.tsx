@@ -10,6 +10,8 @@ import { NextjsLogoLight } from "./ui/svgs/nextjsLogoLight";
 import { AwsLight } from "./ui/svgs/awsLight";
 import { cn } from "@/lib/utils";
 import { Gmail } from "./ui/svgs/gmail";
+import { ReactWordmarkDark } from "./ui/svgs/reactWordmarkDark";
+
 
 const logos = [
   NextjsLogoLight,
@@ -19,7 +21,7 @@ const logos = [
   ResendWordmarkBlack,
   AwsLight,
   Gmail,
-  NextjsLogoLight,
+  ReactWordmarkDark
 ];
 
 export default function LogoStack() {
@@ -71,7 +73,7 @@ export default function LogoStack() {
               <Logo
                 className={cn(
                   "h-4 **:fill-zinc-700",
-                  (Logo === AwsLight || Logo === Gmail) && "h-6",
+                  (Logo === AwsLight || Logo === Gmail || Logo === ReactWordmarkDark) && "h-6",
                 )}
               />
             </motion.div>
