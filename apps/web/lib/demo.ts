@@ -1,6 +1,4 @@
-// lib/demoData.ts
 
-// const now = new Date("2026-03-17T15:00:00Z")
 const now = new Date()
 
 const minsAgo  = (m: number) => new Date(now.getTime() - m * 60 * 1000).toISOString()
@@ -103,7 +101,7 @@ export const demoData = {
   website: {
     id: "demo",
     name: "Demo Website",
-    url: "https://demo.example.com",
+    url: "https://sentinel.ninad1.me/",
     currentStatus: 200,
     lastChecked: new Date(minsAgo(0)),
   },
