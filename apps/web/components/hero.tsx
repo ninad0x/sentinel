@@ -45,14 +45,14 @@ export function Hero() {
             <div className="flex items-center justify-center gap-4 pt-6 flex-wrap">
               <Link
                 href="/dashboard"
-                className="px-6 py-3 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition"
+                className="px-6 py-3 bg-neutral-800 text-white text-sm font-medium rounded-lg hover:bg-neutral-700 transition  "
               >
                 Get Started
               </Link>
 
               <Link
                 href="/monitor/demo"
-                className="px-6 py-3 bg-white border border-gray-200 text-gray-900 text-sm font-medium rounded-lg hover:bg-gray-50 transition"
+                className="px-6 py-3 bg-white border border-gray-200 text-gray-900 text-sm font-medium rounded-lg hover:bg-gray-50 transition "
               >
                 Demo site
               </Link>

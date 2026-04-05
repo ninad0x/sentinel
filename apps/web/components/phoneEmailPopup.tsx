@@ -7,7 +7,7 @@ export default function PhoneEmailPopup() {
     <motion.div
       initial="initial"
       whileHover="hover"
-      className="bg-white h-80 flex col-span-1 md:col-span-4 relative justify-center border-l border-t"
+      className="bg-white border-divide h-80 flex col-span-1 md:col-span-4 relative justify-center border-l border-t "
     >
       <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[50%] bg-linear-to-b from-white/0 to-white to-20% z-20 rounded-b-2xl" />
 
