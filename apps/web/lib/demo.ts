@@ -74,7 +74,7 @@ const metrics = Array.from({ length: 24 }, (_, i) => {
 const monthlyMetrics = Array.from({ length: 30 * 24 }, (_, i) => {
   const windowStart = new Date(now.getTime() - (30 * 24 - i) * 60 * 60 * 1000)
 
-  const dayIndex = Math.floor(i / 24) // ✅ FIXED (important)
+  const dayIndex = Math.floor(i / 24)
 
   let uptimePercent
 

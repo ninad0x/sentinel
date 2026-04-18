@@ -17,8 +17,8 @@ export default function MonitorHeader({ data }: MonitorProps) {
   const handleDelete = async (id: string) => {
   await fetch(`/api/website/${id}`,
     { method: "DELETE" })
-    router.push("/dashboard")
     queryClient.invalidateQueries({ queryKey: ["website"]})
+    router.push("/dashboard")
   }
 
   return (
