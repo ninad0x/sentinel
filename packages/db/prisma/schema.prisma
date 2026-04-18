@@ -144,7 +144,7 @@ model WebsiteMetric {
 
   createdAt            DateTime   @default(now())
 
-  website               Website    @relation(fields: [websiteId], references: [id])
+  website               Website    @relation(fields: [websiteId], references: [id], onDelete: Cascade)
 
   @@id([id, windowStart])
   @@index([websiteId, windowStart])
