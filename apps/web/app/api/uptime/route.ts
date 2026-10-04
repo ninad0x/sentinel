@@ -32,7 +32,7 @@ export async function POST(req: Request) {
       where: { id: { in: results.map((r) => r.id) } },
       select: { id: true },
     });
-    const validIds = new Set(existing.map((w) => w.id));
+    const validIds = new Set(existing.map((w: { id: string}) => w.id));
     const valid = results.filter((r) => validIds.has(r.id));
 
     const round = new Date(roundAt);
