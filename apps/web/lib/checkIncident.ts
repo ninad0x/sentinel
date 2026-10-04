@@ -59,7 +59,7 @@ export async function checkIncidentForWebsite(websiteId: string): Promise<void> 
 
     if (!website) return
 
-    // Group ticks by round (one tick per region per round, enforced by the unique key).
+    // Group ticks by round (one tick per region per round with unique key).
     const byRound = new Map<number, Round>()
     for (const t of ticks) {
       const key = t.roundAt.getTime()

@@ -1,157 +1,287 @@
+// Demo data for /monitor/demo
+// Everything is generated relative to "now", so it never goes stale.
+// Hourly rows, the 30-day bar, uptime cards and the incident list all come from the
+// same generated numbers, so they agree with each other.
 
-const now = new Date()
+import { MonitorData } from "./types"
 
-const minsAgo  = (m: number) => new Date(now.getTime() - m * 60 * 1000).toISOString()
-const hoursAgo = (h: number) => new Date(now.getTime() - h * 60 * 60 * 1000)
-const daysAgo  = (d: number) => new Date(now.getTime() - d * 24 * 60 * 60 * 1000)
+const MIN = 60_000
+const HOUR = 60 * MIN
+const DAY = 24 * HOUR
+const ROUND = 2 * MIN // check interval
+const CHECKS_PER_HOUR = HOUR / ROUND // 30 per region per hour
 
-// ─── REGION TICKS (last 30 mins, 10 per region) ──────────────────────────────
-
-const regionTicks = [
-  // ap-south-1
-  { status: 200, createdAt: new Date(minsAgo(27)), responseTimeMs: 412, region: { name: "ap-south-1" } },
-  { status: 200, createdAt: new Date(minsAgo(24)), responseTimeMs: 398, region: { name: "ap-south-1" } },
-  { status: 200, createdAt: new Date(minsAgo(21)), responseTimeMs: 421, region: { name: "ap-south-1" } },
-  { status: 200, createdAt: new Date(minsAgo(18)), responseTimeMs: 435, region: { name: "ap-south-1" } },
-  { status: 200, createdAt: new Date(minsAgo(15)), responseTimeMs: 408, region: { name: "ap-south-1" } },
-  { status: 200, createdAt: new Date(minsAgo(12)), responseTimeMs: 390, region: { name: "ap-south-1" } },
-  { status: 200, createdAt: new Date(minsAgo(9)),  responseTimeMs: 415, region: { name: "ap-south-1" } },
-  { status: 200,   createdAt: new Date(minsAgo(6)),  responseTimeMs: 0,   region: { name: "ap-south-1" } },
-  { status: 200,   createdAt: new Date(minsAgo(3)),  responseTimeMs: 0,   region: { name: "ap-south-1" } },
-  { status: 200,   createdAt: new Date(minsAgo(0)),  responseTimeMs: 0,   region: { name: "ap-south-1" } },
-
-  // eu-west-1 — went down for 3 ticks, now recovered
-  { status: 200, createdAt: new Date(minsAgo(27)), responseTimeMs: 310, region: { name: "eu-west-1" } },
-  { status: 200, createdAt: new Date(minsAgo(24)), responseTimeMs: 298, region: { name: "eu-west-1" } },
-  { status: 200, createdAt: new Date(minsAgo(21)), responseTimeMs: 322, region: { name: "eu-west-1" } },
-  { status: 200, createdAt: new Date(minsAgo(18)), responseTimeMs: 305, region: { name: "eu-west-1" } },
-  { status: 0,   createdAt: new Date(minsAgo(15)), responseTimeMs: 0,   region: { name: "eu-west-1" } },
-  { status: 0,   createdAt: new Date(minsAgo(12)), responseTimeMs: 0,   region: { name: "eu-west-1" } },
-  { status: 0,   createdAt: new Date(minsAgo(9)),  responseTimeMs: 0,   region: { name: "eu-west-1" } },
-  { status: 200, createdAt: new Date(minsAgo(6)),  responseTimeMs: 318, region: { name: "eu-west-1" } },
-  { status: 200, createdAt: new Date(minsAgo(3)),  responseTimeMs: 302, region: { name: "eu-west-1" } },
-  { status: 200, createdAt: new Date(minsAgo(0)),  responseTimeMs: 295, region: { name: "eu-west-1" } },
-
-  // us-east-1 — down last 3 ticks (global incident)
-  { status: 200, createdAt: new Date(minsAgo(27)), responseTimeMs: 512, region: { name: "us-east-1" } },
-  { status: 200, createdAt: new Date(minsAgo(24)), responseTimeMs: 498, region: { name: "us-east-1" } },
-  { status: 200, createdAt: new Date(minsAgo(21)), responseTimeMs: 521, region: { name: "us-east-1" } },
-  { status: 200, createdAt: new Date(minsAgo(18)), responseTimeMs: 505, region: { name: "us-east-1" } },
-  { status: 200, createdAt: new Date(minsAgo(15)), responseTimeMs: 488, region: { name: "us-east-1" } },
-  { status: 200, createdAt: new Date(minsAgo(12)), responseTimeMs: 510, region: { name: "us-east-1" } },
-  { status: 200, createdAt: new Date(minsAgo(9)),  responseTimeMs: 495, region: { name: "us-east-1" } },
-  { status: 200,   createdAt: new Date(minsAgo(6)),  responseTimeMs: 0,   region: { name: "us-east-1" } },
-  { status: 200,   createdAt: new Date(minsAgo(3)),  responseTimeMs: 0,   region: { name: "us-east-1" } },
-  { status: 200,   createdAt: new Date(minsAgo(0)),  responseTimeMs: 0,   region: { name: "us-east-1" } },
+const REGIONS = [
+  { id: "demo-ap", name: "ap-south-1", base: 412 },
+  { id: "demo-eu", name: "eu-west-1", base: 308 },
+  { id: "demo-us", name: "us-east-1", base: 505 },
 ]
 
-// ─── 24H METRICS (hourly, last 24 hours) ─────────────────────────────────────
+// Past incidents. Hours inside them are generated as failing for the listed regions.
+const INCIDENT_SPECS = [
+  { id: "demo-inc-1", daysAgo: 6, hours: 2, down: ["us-east-1"] }, // Regional, 120 min
+  { id: "demo-inc-2", daysAgo: 14, hours: 1, down: ["eu-west-1", "us-east-1"] }, // Global, 60 min
+  { id: "demo-inc-3", daysAgo: 22, hours: 1, down: ["ap-south-1"] }, // Regional, 60 min
+]
 
-const metrics = Array.from({ length: 24 }, (_, i) => {
-  const windowStart = hoursAgo(24 - i)
-  const windowEnd   = hoursAgo(23 - i)
+type Stats = {
+  checks: number
+  failures: number
+  avg: number | null
+  min: number | null
+  max: number | null
+  p50: number | null
+  p95: number | null
+  p99: number | null
+}
 
-  const isRegionalHour = i === 10
-  const isGlobalHour   = i >= 22
+// Small deterministic random in [0, 1): the same hour always gives the same numbers.
+const rand = (seed: number) => {
+  let t = (seed + 0x6d2b79f5) | 0
+  t = Math.imul(t ^ (t >>> 15), t | 1)
+  t ^= t + Math.imul(t ^ (t >>> 7), t | 61)
+  return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+}
 
-  const uptimePercent     = isGlobalHour ? 33 : isRegionalHour ? 66 : 99.5 + Math.random() * 0.5
-  const avgResponseTimeMs = isGlobalHour ? null : Math.round(420 + Math.random() * 80)
-  const regionsDownList   = isGlobalHour ? ["ap-south-1", "us-east-1"] : isRegionalHour ? ["eu-west-1"] : []
+const dayKey = (ms: number) =>
+  new Date(ms).toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" }) // "2026-10-04"
+
+// Same maths as getMonitorData: uptime = good checks / all checks, latency weighted by good checks.
+type Row = { checks: number; failures: number; avgResponseTimeMs: number | null }
+
+const uptimeOf = (rows: Pick<Row, "checks" | "failures">[]) => {
+  const checks = rows.reduce((s, r) => s + r.checks, 0)
+  const failures = rows.reduce((s, r) => s + r.failures, 0)
+  return checks ? ((checks - failures) / checks) * 100 : null
+}
+
+const latencyOf = (rows: Row[]) => {
+  let sum = 0
+  let n = 0
+  for (const r of rows) {
+    if (r.avgResponseTimeMs === null) continue
+    const w = r.checks - r.failures
+    sum += r.avgResponseTimeMs * w
+    n += w
+  }
+  return n ? Math.round(sum / n) : 0
+}
+
+const noLatency = { avg: null, min: null, max: null, p50: null, p95: null, p99: null }
+
+// Combine regional stats into the pooled "ALL" row.
+const pool = (all: Stats[]): Stats => {
+  const checks = all.reduce((s, x) => s + x.checks, 0)
+  const failures = all.reduce((s, x) => s + x.failures, 0)
+  const good = all.filter((x) => x.avg !== null)
+  if (good.length === 0) return { checks, failures, ...noLatency }
+
+  const weight = (x: Stats) => x.checks - x.failures
+  const total = good.reduce((s, x) => s + weight(x), 0)
+  const weighted = (pick: (x: Stats) => number) =>
+    Math.round(good.reduce((s, x) => s + pick(x) * weight(x), 0) / total)
 
   return {
-    windowStart,
-    windowEnd,
-    uptimePercent:    Math.round(uptimePercent * 100) / 100,
-    avgResponseTimeMs,
-    regionsDownList,
-    regionsDownCount: regionsDownList.length,
+    checks,
+    failures,
+    avg: weighted((x) => x.avg!),
+    min: Math.min(...good.map((x) => x.min!)),
+    max: Math.max(...good.map((x) => x.max!)),
+    p50: weighted((x) => x.p50!),
+    p95: Math.max(...good.map((x) => x.p95!)),
+    p99: Math.max(...good.map((x) => x.p99!)),
   }
-})
+}
 
-// ─── MONTHLY METRICS (hourly rows for last 30 days, ~720 rows) ───────────────
-// Simulate realistic uptime with a few bad days scattered across the month
+export function getDemoData(): MonitorData {
+  const now = Date.now()
+  const currentHour = Math.floor(now / HOUR) * HOUR
 
-const monthlyMetrics = Array.from({ length: 30 * 24 }, (_, i) => {
-  const windowStart = new Date(now.getTime() - (30 * 24 - i) * 60 * 60 * 1000)
+  // ---------- incidents ----------
+  const incidentWindows = INCIDENT_SPECS.map((i) => {
+    const startedAt = Math.floor((now - i.daysAgo * DAY) / HOUR) * HOUR
+    return { ...i, startedAt, endedAt: startedAt + i.hours * HOUR }
+  })
 
-  const dayIndex = Math.floor(i / 24)
+  const isDown = (region: string, hourStart: number) =>
+    incidentWindows.some(
+      (i) => i.down.includes(region) && hourStart >= i.startedAt && hourStart < i.endedAt
+    )
 
-  let uptimePercent
+  const incidents = incidentWindows
+    .map((i) => ({
+      id: i.id,
+      websiteId: "demo",
+      startedAt: new Date(i.startedAt),
+      endedAt: new Date(i.endedAt),
+      status: "Resolved",
+      type: (i.down.length >= 2 ? "Global" : "Regional") as "Global" | "Regional",
+      cause: i.down.join(", "),
+    }))
+    .sort((a, b) => b.startedAt.getTime() - a.startedAt.getTime())
 
-  // EXACT control of full days
-  if (dayIndex === 3) {
-    uptimePercent = 55 
-  } else if ([5, 15].includes(dayIndex)) {
-    uptimePercent = 80
-  } else {
-    uptimePercent = 97 + Math.random() * 2
+  // ---------- hourly stats for the last 30 days (oldest first) ----------
+  const hours = Array.from({ length: 720 }, (_, i) => currentHour - (720 - i) * HOUR)
+
+  const regionHour = (idx: number, hourStart: number): Stats => {
+    const region = REGIONS[idx]!
+    const failures = isDown(region.name, hourStart) ? CHECKS_PER_HOUR : 0
+    if (failures === CHECKS_PER_HOUR) return { checks: CHECKS_PER_HOUR, failures, ...noLatency }
+
+    const seed = Math.floor(hourStart / HOUR) * 10 + idx
+    const avg = Math.round(region.base * (0.92 + 0.16 * rand(seed)))
+    return {
+      checks: CHECKS_PER_HOUR,
+      failures,
+      avg,
+      min: Math.round(avg * 0.7),
+      max: Math.round(avg * 1.8),
+      p50: Math.round(avg * 0.96),
+      p95: Math.round(avg * 1.3),
+      p99: Math.round(avg * 1.55),
+    }
   }
+
+  const hourly = hours.map((hourStart) => {
+    const per = REGIONS.map((_, idx) => regionHour(idx, hourStart))
+    return { hourStart, per, all: pool(per) }
+  })
+
+  const metricRow = (hourStart: number, regionId: string, s: Stats) => ({
+    windowStart: new Date(hourStart),
+    regionId,
+    checks: s.checks,
+    failures: s.failures,
+    uptimePercent: (100 * (s.checks - s.failures)) / s.checks,
+    avgResponseTimeMs: s.avg,
+    minMs: s.min,
+    maxMs: s.max,
+    p50Ms: s.p50,
+    p95Ms: s.p95,
+    p99Ms: s.p99,
+  })
+
+  // last 24h: one row per region + the pooled "ALL" row, for every hour
+  const last24 = hourly.slice(-24)
+  const metrics = last24.flatMap((h) => [
+    ...REGIONS.map((r, idx) => metricRow(h.hourStart, r.id, h.per[idx]!)),
+    metricRow(h.hourStart, "ALL", h.all),
+  ])
+
+  // last 30 days: "ALL" rows only
+  const monthlyMetrics = hourly.map((h) => {
+    const m = metricRow(h.hourStart, "ALL", h.all)
+    return {
+      windowStart: m.windowStart,
+      checks: m.checks,
+      failures: m.failures,
+      uptimePercent: m.uptimePercent,
+      avgResponseTimeMs: m.avgResponseTimeMs,
+      p95Ms: m.p95Ms,
+    }
+  })
+
+  // ---------- live ticks, last hour ----------
+  const roundNow = Math.floor(now / ROUND) * ROUND
+  const regionTicks: {
+    status: number
+    createdAt: Date
+    roundAt: Date
+    responseTimeMs: number | null
+    region: { name: string }
+  }[] = []
+
+  for (let k = 29; k >= 0; k--) {
+    const roundAt = roundNow - k * ROUND
+    REGIONS.forEach((r, idx) => {
+      // eu-west-1 runs about 25 seconds behind, like the real deployment
+      const offset = idx === 1 ? 24_000 + Math.round(rand(roundAt / ROUND) * 6_000) : 2_000 + idx * 2_000
+      const createdAt = roundAt + offset
+      if (createdAt > now) return
+
+      // one failed check ~40 min ago: a single blip, so no incident (needs 2 bad rounds in a row)
+      const failed = r.name === "us-east-1" && k === 20
+      regionTicks.push({
+        status: failed ? 0 : 200,
+        createdAt: new Date(createdAt),
+        roundAt: new Date(roundAt),
+        responseTimeMs: failed ? null : Math.round(r.base * (0.85 + 0.3 * rand(roundAt / ROUND + idx * 101))),
+        region: { name: r.name },
+      })
+    })
+  }
+  regionTicks.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())
+
+  // ---------- region cards (last 24h, from the regional rows) ----------
+  const regionSummary = REGIONS.map((r, idx) => {
+    const rows = last24.map((h) => {
+      const s = h.per[idx]!
+      return { checks: s.checks, failures: s.failures, avgResponseTimeMs: s.avg, p50: s.p50, p95: s.p95, max: s.max }
+    })
+    const p95s = rows.map((x) => x.p95).filter((x): x is number => x !== null)
+    const maxs = rows.map((x) => x.max).filter((x): x is number => x !== null)
+    return {
+      name: r.name,
+      avgLatency: latencyOf(rows),
+      p95Latency: p95s.length ? Math.max(...p95s) : null,
+      p50Latency: latencyOf(rows.map((x) => ({ ...x, avgResponseTimeMs: x.p50 }))),
+      maxLatency: maxs.length ? Math.max(...maxs) : null,
+      uptimePercent: uptimeOf(rows) ?? 0,
+      totalChecks: rows.reduce((s, x) => s + x.checks, 0),
+    }
+  })
+
+  // ---------- 30-day bar ----------
+  const byDay = new Map<string, { checks: number; failures: number; worstP95: number | null }>()
+  for (const m of monthlyMetrics) {
+    const key = dayKey(m.windowStart.getTime())
+    const d = byDay.get(key) ?? { checks: 0, failures: 0, worstP95: null }
+    d.checks += m.checks
+    d.failures += m.failures
+    if (m.p95Ms !== null && (d.worstP95 === null || m.p95Ms > d.worstP95)) d.worstP95 = m.p95Ms
+    byDay.set(key, d)
+  }
+
+  const dailyUptime = Array.from({ length: 30 }, (_, i) => {
+    const date = dayKey(now - (29 - i) * DAY)
+    const d = byDay.get(date)
+    return {
+      date,
+      uptime: d && d.checks > 0 ? ((d.checks - d.failures) / d.checks) * 100 : null,
+      p95: d?.worstP95 ?? null,
+    }
+  })
+
+  // ---------- uptime and latency cards ----------
+  const last7d = monthlyMetrics.filter((m) => m.windowStart.getTime() >= now - 7 * DAY)
+  const last24h = monthlyMetrics.filter((m) => m.windowStart.getTime() >= now - DAY)
+
+  const newest = regionTicks[regionTicks.length - 1]
 
   return {
-    windowStart,
-    uptimePercent: Math.round(uptimePercent * 100) / 100,
-    avgResponseTimeMs:
-      uptimePercent < 70 ? null : Math.round(400 + Math.random() * 100),
+    website: {
+      id: "demo",
+      name: "Demo Website",
+      url: "https://sentinel.ninad.codes",
+      currentStatus: 200,
+      lastChecked: newest ? newest.createdAt : new Date(now),
+    },
+    regions: REGIONS.map(({ id, name }) => ({ id, name })),
+    metrics,
+    monthlyMetrics,
+    incidents,
+    regionTicks,
+    regionSummary,
+    uptime: {
+      h24: uptimeOf(last24h) ?? 0,
+      d7: uptimeOf(last7d) ?? 0,
+      d30: uptimeOf(monthlyMetrics) ?? 0,
+    },
+    latency: {
+      h24: latencyOf(last24h),
+      d7: latencyOf(last7d),
+      d30: latencyOf(monthlyMetrics),
+    },
+    dailyUptime,
   }
-})
-
-// ─── EXPORT ──────────────────────────────────────────────────────────────────
-
-export const demoData = {
-  website: {
-    id: "demo",
-    name: "Demo Website",
-    url: "https://sentinel.ninad1.me/",
-    currentStatus: 200,
-    lastChecked: new Date(minsAgo(0)),
-  },
-
-  metrics,
-  monthlyMetrics,
-
-incidents: [
-  {
-    id: "inc_red",
-    websiteId: "demo",
-    type: "Global",
-    status: "Resolved",
-    cause: "us-east-1",
-    startedAt: daysAgo(29 - 3), 
-    endedAt: new Date(daysAgo(29 - 3).getTime() + 3 * 60 * 60 * 1000),
-    createdAt: daysAgo(29 - 3),
-  },
-
-  {
-    id: "inc_y1",
-    websiteId: "demo",
-    type: "Regional",
-    status: "Resolved",
-    cause: "eu-west-1",
-    startedAt: daysAgo(29 - 7),
-    endedAt: new Date(daysAgo(29 - 7).getTime() + 2 * 60 * 60 * 1000),
-    createdAt: daysAgo(29 - 7),
-  },
-
-  {
-    id: "inc_y2",
-    websiteId: "demo",
-    type: "Regional",
-    status: "Resolved",
-    cause: "ap-south-1",
-    startedAt: daysAgo(29 - 12),
-    endedAt: new Date(daysAgo(29 - 12).getTime() + 2 * 60 * 60 * 1000),
-    createdAt: daysAgo(29 - 12),
-  },
-],
-
-  regionTicks,
-
-  regionSummary: [
-    { name: "ap-south-1", avgLatency: 412, totalChecks: 480 },
-    { name: "eu-west-1",  avgLatency: 308, totalChecks: 480 },
-    { name: "us-east-1",  avgLatency: 505, totalChecks: 480 },
-  ],
-
-  uptime: { h24: 99.9, d7: 99.9, d30: 97.2 },
-  latency: { h24: 455, d7: 480, d30: 495 },
 }

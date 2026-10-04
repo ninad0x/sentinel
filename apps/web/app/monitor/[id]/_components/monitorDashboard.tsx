@@ -1,12 +1,12 @@
 'use client'
 import { useQuery } from '@tanstack/react-query'
 import MonitorHeader from "./monitorHeader"
-import RegionalLatency from './regionLatencyGraph'
 import UptimeOverview from './uptimeOverview'
 import IncidentTimeline from './incidentList'
 import { motion } from 'motion/react'
 import RegionCards from './regionCards'
 import UptimeBars from './uptimeBar'
+import LatencyGraphh from './LatencyGraph'
 
 export default function MonitorDashboard({ id }: { id: string }) {
 
@@ -39,7 +39,7 @@ export default function MonitorDashboard({ id }: { id: string }) {
             {[
                 MonitorHeader, 
                 RegionCards, 
-                RegionalLatency,
+                LatencyGraphh,
                 UptimeOverview,
                 UptimeBars,
                 IncidentTimeline

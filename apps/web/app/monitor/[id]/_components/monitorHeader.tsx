@@ -15,6 +15,7 @@ export default function MonitorHeader({ data }: MonitorProps) {
   const queryClient = useQueryClient()
 
   const handleDelete = async (id: string) => {
+  if (id === "demo") return router.push("/")
   await fetch(`/api/website/${id}`,
     { method: "DELETE" })
     queryClient.invalidateQueries({ queryKey: ["website"]})
@@ -76,7 +77,6 @@ export default function MonitorHeader({ data }: MonitorProps) {
             data.website.lastChecked === null 
             ? "--:--"
             : new Date(data.website.lastChecked!).toLocaleString("en-IN", {
-                timeZone: "Asia/Kolkata",
                 dateStyle: "medium",
                 timeStyle: "short"
               })

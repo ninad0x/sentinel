@@ -58,7 +58,7 @@ export default function IncidentTimeline({ data }: MonitorProps) {
                         {incident.cause && (
                           <p className="text-sm text-gray-600 mb-2">
                             Affected:{" "}
-                            {incident.cause.split(", ").map((r) => (
+                            {incident.cause.split(", ").map((r: string) => (
                               <span
                                 key={r}
                                 className="mx-px bg-gray-100 px-2 py-0.5 rounded text-xs font-mono text-gray-600"
@@ -74,7 +74,6 @@ export default function IncidentTimeline({ data }: MonitorProps) {
                             {new Date(incident.startedAt).toLocaleString(
                               "en-IN",
                               {
-                                timeZone: "Asia/Kolkata",
                                 dateStyle: "medium",
                                 timeStyle: "short",
                               },
@@ -87,7 +86,6 @@ export default function IncidentTimeline({ data }: MonitorProps) {
                               {new Date(incident.endedAt).toLocaleString(
                                 "en-IN",
                                 {
-                                  timeZone: "Asia/Kolkata",
                                   dateStyle: "medium",
                                   timeStyle: "short",
                                 },
