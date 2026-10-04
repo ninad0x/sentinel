@@ -14,7 +14,6 @@ export const signInSchema = z.object({
 
 const WebsiteTickSchema = z.object({
     id: z.string(),
-    website: z.string(),
     status: z.number(),
     latency: z.number().nullable(),
     timestamp: z.number(),
@@ -23,6 +22,7 @@ const WebsiteTickSchema = z.object({
 
 export const WebsiteTickBatch = z.object({
     region: z.string(),
+    roundAt: z.string().datetime(),
     results: z.array(WebsiteTickSchema)
 })
 

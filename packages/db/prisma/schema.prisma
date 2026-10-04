@@ -1,4 +1,3 @@
-
 generator client {
   provider = "prisma-client-js"
   // output   = "../generated/prisma"
@@ -23,7 +22,6 @@ model User {
   sessions       Session[]
   accounts       Account[]
   websites       Website[]
-  
 }
 
 model Session {
@@ -40,21 +38,21 @@ model Session {
 }
 
 model Account {
-  id                   String    @id @default(cuid())
-  userId               String
-  accountId            String
-  providerId           String
-  accessToken          String?
-  refreshToken         String?
-  accessTokenExpiresAt DateTime?
+  id                    String    @id @default(cuid())
+  userId                String
+  accountId             String
+  providerId            String
+  accessToken           String?
+  refreshToken          String?
+  accessTokenExpiresAt  DateTime?
   refreshTokenExpiresAt DateTime?
-  scope                String?
-  idToken              String?
-  password             String?
-  createdAt            DateTime  @default(now())
-  updatedAt            DateTime  @updatedAt
+  scope                 String?
+  idToken               String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
 
-  user                 User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([accountId, providerId])
 }
@@ -72,81 +70,93 @@ model Verification {
 
 
 model Website {
-  id          String      @id    @default(cuid())
-  url         String
-  name        String
-  userId      String
-  timeAdded   DateTime    @default(now())
+  id            String      @id @default(cuid())
+  url           String
+  name          String
+  userId        String
+  timeAdded     DateTime    @default(now())
 
-  enabled        Boolean     @default(true)
-  currentStatus   Int     
-  lastChecked     DateTime?
+  enabled       Boolean     @default(true)
+  currentStatus Int
+  lastChecked   DateTime?
 
-  ticks       WebsiteTick[]
-  metric      WebsiteMetric[]
-  incidents   Incident[]
-  user        User       @relation(fields: [userId], references: [id])
+  ticks         WebsiteTick[]
+  metric        WebsiteMetric[]
+  incidents     Incident[]
+  user          User        @relation(fields: [userId], references: [id])
 }
 
 model Incident {
-  id          String    @id @default(cuid())
+  id          String        @id @default(cuid())
   websiteId   String
-  startedAt   DateTime  @default(now())
+  startedAt   DateTime      @default(now())
   endedAt     DateTime?
   status      String
-  type        IncidentType    @default(Global)
-  cause       String? 
-  
-  website     Website   @relation(fields: [websiteId], references: [id], onDelete: Cascade)
-  @@unique([websiteId, endedAt])
+  type        IncidentType  @default(Global)
+  cause       String?
+
+  website     Website       @relation(fields: [websiteId], references: [id], onDelete: Cascade)
+
+  // "Only one open incident per site" is a partial unique index, which Prisma
+  // can't express. Add it by hand in the migration SQL:
+  //   CREATE UNIQUE INDEX one_open_incident_per_site
+  //     ON "Incident" ("websiteId") WHERE "endedAt" IS NULL;
+  @@index([websiteId, startedAt])
 }
 
 enum IncidentType {
-  Global  
+  Global
   Regional
 }
 
 model Region {
-  id          String    @id     @default(cuid())
-  name        String
-  ticks       WebsiteTick[]
-
+  id     String        @id @default(cuid())
+  name   String        @unique
+  ticks  WebsiteTick[]
 }
 
 model WebsiteTick {
-  id                    String    @default(cuid())
-  createdAt             DateTime    @default(now()) @db.Timestamptz()
-  responseTimeMs        Int
-  status                Int
-  regionId              String
-  websiteId             String  
-  details               String?
-  region                Region  @relation(fields: [regionId], references: [id])
-  website               Website @relation(fields: [websiteId], references: [id], onDelete: Cascade)
+  id              String   @default(cuid())
+  createdAt       DateTime @default(now()) @db.Timestamptz()  // actual ping
+  roundAt         DateTime @db.Timestamptz()
+  responseTimeMs  Int?
+  status          Int
+  regionId        String
+  websiteId       String
+  details         String?
+
+  region          Region   @relation(fields: [regionId], references: [id])
+  website         Website  @relation(fields: [websiteId], references: [id], onDelete: Cascade)
 
   @@id([id, createdAt])
+  @@unique([websiteId, regionId, roundAt])
   @@index([websiteId, createdAt])
+  @@index([roundAt])
 }
 
+// Hourly rollup. Aite * region per hour,
+// plus one row with regionId = "ALL" that pools every region (for site-wide p95/p99).
 model WebsiteMetric {
-  id                    String    @default(cuid())
+  id                 String   @default(cuid())
+  websiteId          String
+  regionId           String   @default("ALL")
+  windowStart        DateTime @db.Timestamptz()
 
-  websiteId            String
-  windowStart          DateTime  @db.Timestamptz()
-  windowEnd            DateTime
+  checks             Int
+  failures           Int
+  uptimePercent      Float
+  avgResponseTimeMs  Int?
+  minMs              Int?
+  maxMs              Int?
+  p50Ms              Int?
+  p95Ms              Int?
+  p99Ms              Int?
 
-  finalStatus          Int
-  uptimePercent        Float
-  avgResponseTimeMs    Int?
+  createdAt          DateTime @default(now())
 
-  regionsDownCount    Int
-  regionsDownList     String[]
-
-  createdAt            DateTime   @default(now())
-
-  website               Website    @relation(fields: [websiteId], references: [id], onDelete: Cascade)
+  website            Website  @relation(fields: [websiteId], references: [id], onDelete: Cascade)
 
   @@id([id, windowStart])
+  @@unique([websiteId, regionId, windowStart])
   @@index([websiteId, windowStart])
 }
-
