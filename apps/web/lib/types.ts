@@ -91,7 +91,7 @@ export type MonitorData = {
 }
 
 export type CardData = {
-  uptime24h: number;
+  uptime24h: number | null;
   avgResponseTime: number | null;
   id: string;
   url: string;

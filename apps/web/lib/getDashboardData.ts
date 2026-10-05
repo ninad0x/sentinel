@@ -19,26 +19,44 @@ export const getDashboardData = async (userId: string) => {
     }
   })
 
-  const metrics = await prisma.websiteMetric.groupBy({
-    by: ["websiteId"],
-    where: { windowStart: { gte: oneDayAgo } },
-    _avg: {
-      uptimePercent: true,
-      avgResponseTimeMs: true
-    }
+  // Pooled "ALL" rows only, and only for this user's sites.
+  const rows = await prisma.websiteMetric.findMany({
+    where: {
+      websiteId: { in: websites.map((w) => w.id) },
+      regionId: "ALL",
+      windowStart: { gte: oneDayAgo },
+    },
+    select: { websiteId: true, checks: true, failures: true, avgResponseTimeMs: true },
   })
 
-  const metricsMap = new Map<string, typeof metrics[number]>(
-    metrics.map((m) => [m.websiteId, m])
-  )
+  const byWebsite = new Map<string, typeof rows>()
+  for (const r of rows) {
+    const list = byWebsite.get(r.websiteId) ?? []
+    list.push(r)
+    byWebsite.set(r.websiteId, list)
+  }
 
-  return websites.map(site => {
-    const m = metricsMap.get(site.id)
+  return websites.map((site) => {
+    const siteRows = byWebsite.get(site.id) ?? []
+
+    // Uptime = good checks / all checks (never average the hourly percentages)
+    const checks = siteRows.reduce((s, r) => s + r.checks, 0)
+    const failures = siteRows.reduce((s, r) => s + r.failures, 0)
+
+    // Latency weighted by each hour's successful checks
+    let latSum = 0
+    let latN = 0
+    for (const r of siteRows) {
+      if (r.avgResponseTimeMs === null) continue
+      const w = r.checks - r.failures
+      latSum += r.avgResponseTimeMs * w
+      latN += w
+    }
 
     return {
       ...site,
-      uptime24h: m?._avg.uptimePercent ?? 100,
-      avgResponseTime: m?._avg.avgResponseTimeMs ?? null
+      uptime24h: checks ? ((checks - failures) / checks) * 100 : null, // null = no data yet
+      avgResponseTime: latN ? Math.round(latSum / latN) : null,
     }
   })
 }
