@@ -1,4 +1,4 @@
-const BACKEND_URL = process.env.STAGING_URL!;
+const BACKEND_URL = process.env.BACKEND_URL!;
 
 export const handler = async (event: any) => {
   // CDK: SqsEventSource with batchSize: 1, so there is exactly one record.

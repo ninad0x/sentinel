@@ -13,7 +13,7 @@ export class UptimeStack extends cdk.Stack {
 
     // Env vars shared by every Lambda.
     const commonEnv = {
-      STAGING_URL: process.env.STAGING_URL!,
+      BACKEND_URL: process.env.BACKEND_URL!,
       INTERNAL_API_KEY: process.env.INTERNAL_API_KEY!,
     };
 

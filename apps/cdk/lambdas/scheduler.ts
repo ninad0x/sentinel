@@ -2,8 +2,8 @@ import { SQSClient, SendMessageCommand } from "@aws-sdk/client-sqs";
 
 const sqs = new SQSClient({});
 
-const BACKEND_URL = process.env.STAGING_URL!;
-const INTERVAL_MS = Number(process.env.INTERVAL_MIN) * 60_000;
+const BACKEND_URL = process.env.BACKEND_URL!;
+const INTERVAL_MS = 2 * 60_000;
 
 export const handler = async (event: { time?: string }) => {
   try {
