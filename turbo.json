@@ -13,7 +13,8 @@
         "DATABASE_URL",
         "NEXT_PUBLIC_APP_URL",
         "INTERNAL_API_KEY",
-        "RESEND_API_KEY"
+        "RESEND_API_KEY",
+        "ADMIN_KEY"
       ]
     },
     "@repo/db#build": { "cache": false },
