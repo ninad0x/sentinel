@@ -4,10 +4,11 @@ import { IncidentEmailParams } from "./emails/incidentAlertEmail"
 
 // After this long, a round is judged with whichever regions have reported (slow EU ~30s).
 const ROUND_GRACE_MS = 90_000
-// How far back to look for rounds.
-const LOOKBACK_MS = 10 * 60_000
+const LOOKBACK_MS = 15 * 60_000   // How far back to look for rounds.
+const OPEN_AFTER = 3
+const CLOSE_AFTER = 5
 
-const isDown = (status: number) => status === 0 || status >= 400
+const isDown = (status: number) => status === 0 || status >= 500
 
 type IncidentKind = "Global" | "Regional"
 type Round = { roundAt: Date; reported: number; down: string[] }
@@ -17,27 +18,17 @@ type Decision =
   | { action: "upgrade" }
   | { action: "close" }
 
-// Pure decision logic. `latest` and `previous` are the two most recent complete rounds.
-//   open:    2 rounds in a row with at least one region down
-//   type:    2+ regions down in the latest round = Global, exactly 1 = Regional
-//   upgrade: an open Regional incident whose latest round now has 2+ regions down
-//   close:   2 rounds in a row with every region OK
-export function decide(
-  latest: Round,
-  previous: Round,
-  open: { type: IncidentKind } | null
-): Decision {
-  // Fewer than 2 regions reported: not enough data to judge, change nothing.
-  if (latest.reported < 2 || previous.reported < 2) return { action: "none" }
 
-  const latestBad = latest.down.length > 0
-  const previousBad = previous.down.length > 0
+export function decide(rounds: Round[], open: { type: IncidentKind } | null): Decision {
+  const need = open ? CLOSE_AFTER : OPEN_AFTER
+  const last = rounds.slice(0, need)
+  if (last.length < need || last.some(r => r.reported < 2)) return { action: "none" }
+
+  const latest = last[0]!
   const type: IncidentKind = latest.down.length >= 2 ? "Global" : "Regional"
 
-  if (!open) {
-    return latestBad && previousBad ? { action: "open", type } : { action: "none" }
-  }
-  if (!latestBad && !previousBad) return { action: "close" }
+  if (!open) return last.every(r => r.down.length > 0) ? { action: "open", type } : { action: "none" }
+  if (last.every(r => r.down.length === 0)) return { action: "close" }
   if (open.type === "Regional" && type === "Global") return { action: "upgrade" }
   return { action: "none" }
 }
@@ -78,7 +69,7 @@ export async function checkIncidentForWebsite(websiteId: string): Promise<void> 
     const [latest, previous] = complete
     if (!latest || !previous) return
 
-    const decision = decide(latest, previous, incident)
+    const decision = decide(complete, incident)
     if (decision.action === "none") return
 
     const baseEmail: Omit<IncidentEmailParams, "startedAt" | "status" | "incidentType" | "downRegions"> = {

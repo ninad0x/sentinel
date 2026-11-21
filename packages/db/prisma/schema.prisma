@@ -7,6 +7,7 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 
@@ -97,10 +98,6 @@ model Incident {
 
   website     Website       @relation(fields: [websiteId], references: [id], onDelete: Cascade)
 
-  // "Only one open incident per site" is a partial unique index, which Prisma
-  // can't express. Add it by hand in the migration SQL:
-  //   CREATE UNIQUE INDEX one_open_incident_per_site
-  //     ON "Incident" ("websiteId") WHERE "endedAt" IS NULL;
   @@index([websiteId, startedAt])
 }
 
